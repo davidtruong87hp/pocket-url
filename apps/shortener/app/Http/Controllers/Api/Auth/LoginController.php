@@ -13,13 +13,13 @@ class LoginController extends Controller
     {
         $user = User::where('email', $request->email)->first();
 
-        if (!$user || !Hash::check($request->password, $user->password)) {
+        if (! $user || ! Hash::check($request->password, $user->password)) {
             return response()->json(['message' => 'Invalid credentials'], 401);
         }
 
         return response()->json([
             'user' => $user,
-            'token' => $user->createToken('api')->plainTextToken
+            'token' => $user->createToken('api')->plainTextToken,
         ]);
     }
 }

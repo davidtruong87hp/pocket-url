@@ -52,7 +52,7 @@ class LoginControllerTest extends TestCase
 
         $this->postJson(self::API_ENDPOINT, [
             'email' => $user->email,
-            'password' => $user->password . '1',
+            'password' => $user->password.'1',
         ])->assertJsonStructure([
             'message',
         ]);
