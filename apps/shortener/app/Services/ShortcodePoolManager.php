@@ -7,6 +7,12 @@ use Illuminate\Support\Str;
 
 class ShortcodePoolManager
 {
+    public const STATUS_LOW = 'low';
+
+    public const STATUS_HEALTHY = 'healthy';
+
+    public const STATUS_REFILLED = 'refilled';
+
     private int $targetSize;
 
     private int $minSize;
@@ -20,14 +26,26 @@ class ShortcodePoolManager
         $this->batchSize = config('shortener.pool.refill_batch_size');
     }
 
-    public function checkAndRefillPool(): void
+    public function checkAndRefillPool(): array
     {
         $currentSize = $this->poolRepository->getPoolSize();
 
-        if ($currentSize < $this->minSize) {
-            $needed = $this->targetSize - $currentSize;
-            $this->refill($needed);
+        if ($currentSize >= $this->minSize) {
+            return [
+                'status' => self::STATUS_HEALTHY,
+                'current_size' => $currentSize,
+                'refilled' => 0,
+            ];
         }
+
+        $needed = $this->targetSize - $currentSize;
+        $inserted = $this->refill($needed);
+
+        return [
+            'status' => self::STATUS_REFILLED,
+            'current_size' => $this->poolRepository->getPoolSize(),
+            'refilled' => $inserted,
+        ];
     }
 
     public function refill(int $count): int
@@ -58,7 +76,7 @@ class ShortcodePoolManager
             'target_size' => $this->targetSize,
             'min_size' => $this->minSize,
             'percent_full' => $percentFull,
-            'status' => $currentSize < $this->minSize ? 'low' : 'healthy',
+            'status' => $currentSize < $this->minSize ? self::STATUS_LOW : self::STATUS_HEALTHY,
             'needs_refill' => $currentSize < $this->minSize,
         ];
     }

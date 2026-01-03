@@ -16,24 +16,32 @@ class ShortcodePoolManagerTest extends TestCase
         });
 
         $service = $this->app->make(ShortcodePoolManager::class);
-        $service->checkAndRefillPool();
+        $result = $service->checkAndRefillPool();
 
-        $this->assertTrue(true);
+        $this->assertEquals([
+            'status' => ShortcodePoolManager::STATUS_HEALTHY,
+            'current_size' => 10000,
+            'refilled' => 0,
+        ], $result);
     }
 
     public function test_it_will_refill_pool_when_needed(): void
     {
         $this->mock(ShortcodePoolRepository::class, function (MockInterface $mock) {
-            $mock->shouldReceive('getPoolSize')->once()->andReturn(500);
+            $mock->shouldReceive('getPoolSize')->twice()->andReturn(500, 10000);
             $mock->shouldReceive('insertBatch')->times(10)->andReturnUsing(function ($batch) {
                 return count($batch);
             });
         });
 
         $service = $this->app->make(ShortcodePoolManager::class);
-        $service->checkAndRefillPool();
+        $result = $service->checkAndRefillPool();
 
-        $this->assertTrue(true);
+        $this->assertEquals([
+            'status' => ShortcodePoolManager::STATUS_REFILLED,
+            'current_size' => 10000,
+            'refilled' => 9500,
+        ], $result);
     }
 
     public function test_get_pool_stats(): void

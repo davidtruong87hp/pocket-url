@@ -18,9 +18,14 @@ class ShortcodePoolRepository
 
     public function claimShortCode(): ?object
     {
-        return DB::table('shortcode_pool')->lockForUpdate()
-            ->limit(1)
-            ->first();
+        $result = DB::select('
+            SELECT * FROM shortcode_pool
+            ORDER BY created_at ASC
+            LIMIT 1
+            FOR UPDATE SKIP LOCKED
+        ');
+
+        return $result[0] ?? null;
     }
 
     public function delete(string $shortcode): void
