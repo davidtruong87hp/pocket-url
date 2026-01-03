@@ -3,7 +3,11 @@ services:
     image: shortener-api
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: docker/frankenphp/Dockerfile
+    environment:
+      - XDEBUG_MODE=coverage
+      - XDEBUG_CLIENT_HOST=host.docker.internal
+      - XDEBUG_CLIENT_PORT=9003
     ports:
       - 8000:80
     volumes:
