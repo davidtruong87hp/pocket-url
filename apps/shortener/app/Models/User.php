@@ -46,4 +46,19 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function getRateLimitPerMinute(): int
+    {
+        return config('shortener.rate_limiting.default_per_minute');
+    }
+
+    public function getRateLimitPerHour(): int
+    {
+        return config('shortener.rate_limiting.default_per_hour');
+    }
+
+    public function getRateLimitPerDay(): int
+    {
+        return config('shortener.rate_limiting.default_per_day');
+    }
 }

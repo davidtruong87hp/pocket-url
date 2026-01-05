@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 Route::post('/register', RegisterController::class);
 Route::post('/login', LoginController::class);
 
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware(['auth:sanctum', 'throttle:api-tiered'])->group(function () {
     Route::get('/profile', ProfileController::class);
     Route::post('/logout', LogoutController::class);
 
