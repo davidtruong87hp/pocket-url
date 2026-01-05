@@ -29,3 +29,11 @@ Route::middleware(['auth:sanctum', 'throttle:api-tiered'])->group(function () {
         });
     });
 });
+
+Route::get('/health', function () {
+    return response()->json([
+        'status' => 'ok',
+        'timestamp' => now()->toIso8601String(),
+        'service' => 'pocket-url-shortener-api',
+    ]);
+});

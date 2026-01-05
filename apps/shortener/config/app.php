@@ -123,4 +123,15 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Strict CORS Validation
+    |--------------------------------------------------------------------------
+    |
+    | When enabled, the application will throw an exception and prevent
+    | startup if CORS is misconfigured in production.
+    |
+    */
+
+    'strict_cors_validation' => env('STRICT_CORS_VALIDATION', false),
 ];

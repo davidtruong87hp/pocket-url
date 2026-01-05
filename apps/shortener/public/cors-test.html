@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>CORS Security Test</title>
+        <style>
+            body {
+                font-family: Arial;
+                max-width: 800px;
+                margin: 50px auto;
+            }
+            .info {
+                background: #e3f2fd;
+                padding: 15px;
+                margin: 20px 0;
+                border-radius: 5px;
+            }
+            .test {
+                margin: 20px 0;
+                padding: 15px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+            }
+            .result {
+                margin: 10px 0;
+                padding: 10px;
+                border-radius: 3px;
+            }
+            .success {
+                background: #d4edda;
+                color: #155724;
+            }
+            .error {
+                background: #f8d7da;
+                color: #721c24;
+            }
+            .warning {
+                background: #fff3cd;
+                color: #856404;
+            }
+            button {
+                padding: 10px 20px;
+                margin: 5px;
+                cursor: pointer;
+                background: #007bff;
+                color: white;
+                border: none;
+                border-radius: 3px;
+            }
+            button:hover {
+                background: #0056b3;
+            }
+            pre {
+                background: #f5f5f5;
+                padding: 10px;
+                overflow-x: auto;
+                border-radius: 3px;
+            }
+            code {
+                background: #f5f5f5;
+                padding: 2px 5px;
+                border-radius: 3px;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>CORS Security Test</h1>
+
+        <div class="info">
+            <strong>Current Origin:</strong> <code id="current-origin"></code
+            ><br />
+            <strong>API Endpoint:</strong> <code id="api-endpoint"></code><br />
+            <strong>Status:</strong> <span id="status">Not tested yet</span>
+        </div>
+
+        <div class="test">
+            <h3>Configuration</h3>
+            <label
+                >API URL:
+                <input
+                    type="text"
+                    id="api-url"
+                    value="http://localhost:8000"
+                    style="width: 300px; padding: 5px"
+                />
+            </label>
+            <button onclick="updateApiUrl()">Update</button>
+        </div>
+
+        <div class="test">
+            <h3>Test 1: Simple GET Request</h3>
+            <p>
+                Tests if CORS allows a simple GET request to
+                <code>/api/health</code>
+            </p>
+            <button type="button" onclick="testSimpleRequest()">
+                Run Test
+            </button>
+            <div id="result1"></div>
+        </div>
+
+        <div class="test">
+            <h3>Test 2: Preflight POST Request</h3>
+            <p>Tests if CORS allows a POST request (triggers preflight)</p>
+            <button type="button" onclick="testPreflightRequest()">
+                Run Test
+            </button>
+            <div id="result2"></div>
+        </div>
+
+        <div class="test">
+            <h3>Test 3: Request with Credentials</h3>
+            <p>Tests if CORS allows credentials (cookies, auth headers)</p>
+            <button type="button" onclick="testWithCredentials()">
+                Run Test
+            </button>
+            <div id="result3"></div>
+        </div>
+
+        <div class="test">
+            <h3>Test 4: Expected to Fail (Wrong Origin)</h3>
+            <p>⚠️ This demonstrates CORS blocking by using browser console</p>
+            <button type="button" onclick="showConsoleTest()">
+                Show Console Test
+            </button>
+            <div id="result4"></div>
+        </div>
+
+        <script>
+            let apiUrl = "http://localhost:8000";
+
+            function updateApiUrl() {
+                apiUrl = document.getElementById("api-url").value;
+                document.getElementById("api-endpoint").textContent = apiUrl;
+                showResult(
+                    "info",
+                    "API URL updated. Run tests again.",
+                    "status"
+                );
+            }
+
+            async function testSimpleRequest() {
+                const resultDiv = document.getElementById("result1");
+                showResult("info", "Testing simple GET request...", resultDiv);
+
+                try {
+                    const response = await fetch(`${apiUrl}/api/health`, {
+                        method: "GET",
+                        headers: {
+                            Accept: "application/json",
+                        },
+                    });
+
+                    const corsHeader = response.headers.get(
+                        "Access-Control-Allow-Origin"
+                    );
+                    const data = await response.text();
+
+                    if (corsHeader) {
+                        showResult(
+                            "success",
+                            `
+                        ✅ <strong>CORS Allowed</strong><br>
+                        <strong>Status:</strong> ${response.status}<br>
+                        <strong>CORS Header:</strong> ${corsHeader}<br>
+                        <strong>Origin:</strong> ${window.location.origin}<br>
+                        <strong>Match:</strong> ${
+                            corsHeader === window.location.origin
+                                ? "✓ Yes"
+                                : "✗ No"
+                        }<br>
+                        <strong>Response:</strong> ${data.substring(0, 100)}
+                    `,
+                            resultDiv
+                        );
+                    } else {
+                        showResult(
+                            "warning",
+                            `
+                        ⚠️ <strong>Request succeeded but no CORS headers</strong><br>
+                        This might be a same-origin request or CORS is not configured
+                    `,
+                            resultDiv
+                        );
+                    }
+                } catch (error) {
+                    showResult(
+                        "error",
+                        `
+                    ❌ <strong>CORS Blocked</strong><br>
+                    <strong>Error:</strong> ${error.message}<br>
+                    <strong>Your origin:</strong> ${window.location.origin}<br>
+                    <strong>API URL:</strong> ${apiUrl}<br>
+                    <em>This origin is not in the CORS allowed list</em>
+                `,
+                        resultDiv
+                    );
+                }
+            }
+
+            async function testPreflightRequest() {
+                const resultDiv = document.getElementById("result2");
+                showResult(
+                    "info",
+                    "Testing preflight POST request...",
+                    resultDiv
+                );
+
+                try {
+                    const response = await fetch(`${apiUrl}/api/login`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            Accept: "application/json",
+                        },
+                        body: JSON.stringify({
+                            email: "M4t9o@example.com",
+                            password: "password",
+                        }),
+                    });
+
+                    const corsHeader = response.headers.get(
+                        "Access-Control-Allow-Origin"
+                    );
+
+                    if (response.ok || response.status === 422) {
+                        showResult(
+                            "success",
+                            `
+                        ✅ <strong>Preflight passed, request allowed</strong><br>
+                        <strong>Status:</strong> ${response.status}<br>
+                        <strong>CORS Header:</strong> ${corsHeader}<br>
+                        <em>CORS is properly configured</em>
+                    `,
+                            resultDiv
+                        );
+                    } else {
+                        showResult(
+                            "error",
+                            `
+                        ⚠️ <strong>Request reached server but returned error</strong><br>
+                        <strong>Status:</strong> ${response.status}<br>
+                        <strong>CORS Header:</strong> ${corsHeader}
+                    `,
+                            resultDiv
+                        );
+                    }
+                } catch (error) {
+                    showResult(
+                        "error",
+                        `
+                    ❌ <strong>Preflight CORS check failed</strong><br>
+                    <strong>Error:</strong> ${error.message}<br>
+                    <em>The preflight OPTIONS request was blocked</em>
+                `,
+                        resultDiv
+                    );
+                }
+            }
+
+            async function testWithCredentials() {
+                const resultDiv = document.getElementById("result3");
+                showResult(
+                    "info",
+                    "Testing request with credentials...",
+                    resultDiv
+                );
+
+                try {
+                    const response = await fetch(`${apiUrl}/api/health`, {
+                        method: "GET",
+                        credentials: "include",
+                        headers: {
+                            Accept: "application/json",
+                        },
+                    });
+
+                    const corsCredentials = response.headers.get(
+                        "Access-Control-Allow-Credentials"
+                    );
+                    const corsOrigin = response.headers.get(
+                        "Access-Control-Allow-Origin"
+                    );
+
+                    if (corsCredentials === "true") {
+                        showResult(
+                            "success",
+                            `
+                        ✅ <strong>Credentials allowed</strong><br>
+                        <strong>Access-Control-Allow-Credentials:</strong> ${corsCredentials}<br>
+                        <strong>Access-Control-Allow-Origin:</strong> ${corsOrigin}<br>
+                        <em>Can send cookies and authorization headers</em>
+                    `,
+                            resultDiv
+                        );
+                    } else {
+                        showResult(
+                            "warning",
+                            `
+                        ⚠️ <strong>Request succeeded but credentials not explicitly allowed</strong><br>
+                        <strong>Access-Control-Allow-Credentials:</strong> ${
+                            corsCredentials || "not set"
+                        }<br>
+                        <em>Configure supports_credentials: true in CORS config</em>
+                    `,
+                            resultDiv
+                        );
+                    }
+                } catch (error) {
+                    showResult(
+                        "error",
+                        `
+                    ❌ <strong>Request with credentials failed</strong><br>
+                    <strong>Error:</strong> ${error.message}
+                `,
+                        resultDiv
+                    );
+                }
+            }
+
+            function showConsoleTest() {
+                const resultDiv = document.getElementById("result4");
+                resultDiv.innerHTML = `
+                <div style="background: #f0f0f0; padding: 15px; margin-top: 10px; border-radius: 3px;">
+                    <p><strong>Open Developer Console (F12) and run this:</strong></p>
+                    <pre>// This should FAIL with CORS error from a different origin
+fetch('${apiUrl}/api/health', {
+  method: 'GET',
+  headers: { 'Accept': 'application/json' }
+})
+.then(r => r.json())
+.then(d => console.log('✅ Success:', d))
+.catch(e => console.error('❌ CORS Error:', e));
+
+// Check what origin you're on
+console.log('Current origin:', window.location.origin);</pre>
+
+                    <p><strong>To test blocking:</strong></p>
+                    <ol>
+                        <li>Note your current origin: <code>${window.location.origin}</code></li>
+                        <li>Check if it's in allowed origins (see Laravel config)</li>
+                        <li>If not allowed, the fetch above will fail with CORS error</li>
+                        <li>If allowed, it will succeed</li>
+                    </ol>
+
+                    <p><strong>Your Laravel CORS config should list:</strong></p>
+                    <pre>config/cors.php:
+'allowed_origins' => [
+    'http://localhost:5173',
+    'http://127.0.0.1:5500',  ← Add your current origin
+    // ... other origins
+]</pre>
+                </div>
+            `;
+            }
+
+            function showResult(type, message, target) {
+                const element =
+                    typeof target === "string"
+                        ? document.getElementById(target)
+                        : target;
+
+                let className = "result ";
+                if (type === "success") className += "success";
+                else if (type === "error") className += "error";
+                else if (type === "warning") className += "warning";
+                else if (type === "info") className = "info";
+
+                if (typeof target === "string") {
+                    element.innerHTML = message;
+                } else {
+                    element.innerHTML = `<div class="${className}">${message}</div>`;
+                }
+            }
+        </script>
+    </body>
+</html>
