@@ -6,6 +6,6 @@ RUN install-php-extensions \
     xdebug
 
 # Copy Xdebug configuration
-COPY docker/frankenphp/xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+COPY infrastructures/docker-compose/apps/shortener/docker/frankenphp/xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 
 ENV SERVER_NAME=:80

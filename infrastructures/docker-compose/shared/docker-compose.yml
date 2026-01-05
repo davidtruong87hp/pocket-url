@@ -1,0 +1,39 @@
+services:
+  redis:
+    image: "redis:8-alpine"
+    container_name: "pocket-url-redis"
+    ports:
+      - "6379:6379"
+    volumes:
+      - "redis-data:/data"
+    command: redis-server --appendonly yes
+    networks:
+      - pocket-url-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis-insight:
+    image: redis/redisinsight:2.70
+    container_name: "pocket-url-redis-insight"
+    ports:
+      - "5540:5540"
+    networks:
+      - pocket-url-network
+    volumes:
+      - redis-insight-data:/data
+    restart: unless-stopped
+    depends_on:
+      - redis
+
+networks:
+  pocket-url-network:
+    name: pocket-url-network
+    external: true
+
+volumes:
+  redis-data:
+  redis-insight-data:
