@@ -1,6 +1,7 @@
 services:
   app:
     image: shortener-api
+    container_name: pocket-url-shortener-api
     build:
       context: ../../../../.
       dockerfile: infrastructures/docker-compose/apps/shortener/docker/frankenphp/Dockerfile
@@ -18,8 +19,35 @@ services:
     networks:
       - shortener-api-network
       - pocket-url-network
+
+  worker:
+    container_name: pocket-url-shortener-worker
+    image: shortener-worker
+    build:
+      context: ../../../../.
+      dockerfile: infrastructures/docker-compose/apps/shortener/docker/worker/Dockerfile
+    environment:
+      - DB_HOST=mysql
+      - REDIS_HOST=redis
+      - QUEUE_CONNECTION=redis
+    volumes:
+      - ../../../../apps/shortener:/app
+      - worker-logs:/var/log/supervisor
+    depends_on:
+      - mysql
+    networks:
+      - shortener-api-network
+      - pocket-url-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "supervisorctl", "status"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
   mysql:
     image: mysql:8.0
+    container_name: pocket-url-shortener-db
     ports:
       - 3306:3306
     environment:
@@ -49,3 +77,4 @@ networks:
 
 volumes:
   mysql-data:
+  worker-logs:

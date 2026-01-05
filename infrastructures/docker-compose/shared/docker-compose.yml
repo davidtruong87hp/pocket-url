@@ -1,7 +1,7 @@
 services:
   redis:
     image: "redis:8-alpine"
-    container_name: "pocket-url-redis"
+    container_name: pocket-url-shared-redis
     ports:
       - "6379:6379"
     volumes:
@@ -18,7 +18,7 @@ services:
 
   redis-insight:
     image: redis/redisinsight:2.70
-    container_name: "pocket-url-redis-insight"
+    container_name: pocket-url-shared-redis-insight
     ports:
       - "5540:5540"
     networks:
