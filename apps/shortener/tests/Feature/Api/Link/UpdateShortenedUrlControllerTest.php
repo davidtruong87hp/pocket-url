@@ -50,6 +50,13 @@ class UpdateShortenedUrlControllerTest extends TestCase
         )->assertStatus(200)
             ->assertJsonFragment(['original_url' => $newUrl])
             ->assertJsonFragment(['changed_fields' => ['url']]);
+
+        $this->assertDatabaseCount('url_edit_histories', 1);
+        $this->assertDatabaseHas('url_edit_histories', [
+            'shortened_url_id' => $shortenedUrl->id,
+            'changes->url->old' => $shortenedUrl->url,
+            'changes->url->new' => $newUrl,
+        ]);
     }
 
     public function test_it_should_update_shortened_url_with_only_title()
@@ -65,6 +72,13 @@ class UpdateShortenedUrlControllerTest extends TestCase
             ->assertJsonFragment(['title' => $newTitle])
             ->assertJsonFragment(['original_url' => $shortenedUrl->url])
             ->assertJsonFragment(['changed_fields' => ['title']]);
+
+        $this->assertDatabaseCount('url_edit_histories', 1);
+        $this->assertDatabaseHas('url_edit_histories', [
+            'shortened_url_id' => $shortenedUrl->id,
+            'changes->title->old' => $shortenedUrl->title,
+            'changes->title->new' => $newTitle,
+        ]);
     }
 
     public function test_it_should_update_shortened_url_with_url_and_title()
@@ -81,5 +95,14 @@ class UpdateShortenedUrlControllerTest extends TestCase
             ->assertJsonFragment(['original_url' => $newUrl])
             ->assertJsonFragment(['title' => $newTitle])
             ->assertJsonFragment(['changed_fields' => ['url', 'title']]);
+
+        $this->assertDatabaseCount('url_edit_histories', 1);
+        $this->assertDatabaseHas('url_edit_histories', [
+            'shortened_url_id' => $shortenedUrl->id,
+            'changes->url->old' => $shortenedUrl->url,
+            'changes->url->new' => $newUrl,
+            'changes->title->old' => $shortenedUrl->title,
+            'changes->title->new' => $newTitle,
+        ]);
     }
 }
