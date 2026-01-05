@@ -30,14 +30,17 @@ class RateLimiterServiceProvider extends ServiceProvider
         RateLimiter::for('api-tiered', function (Request $request) {
             /** @var \App\Models\User|null $user */
             $user = $request->user();
+            $endpoint = $request->path();
 
             if (! $user) {
-                return Limit::perMinute(5)->by($request->ip());
+                return Limit::perMinute(5)->by($request->ip().':'.$endpoint);
             }
+
+            $limitBy = $user->id.'.'.$endpoint;
 
             return [
                 Limit::perMinute($user->getRateLimitPerMinute())
-                    ->by($user->id)
+                    ->by($limitBy)
                     ->response(function (Request $request, array $headers) {
                         return response()->json([
                             'message' => 'Rate limit exceeded',
@@ -46,7 +49,7 @@ class RateLimiterServiceProvider extends ServiceProvider
                         ], 429);
                     }),
                 Limit::perHour($user->getRateLimitPerHour())
-                    ->by($user->id)
+                    ->by($limitBy)
                     ->response(function (Request $request, array $headers) {
                         return response()->json([
                             'message' => 'Hourly rate limit exceeded',
@@ -56,7 +59,7 @@ class RateLimiterServiceProvider extends ServiceProvider
                     }),
                 ...($user->getRateLimitPerDay() ? [
                     Limit::perDay($user->getRateLimitPerDay())
-                        ->by($user->id)] : []
+                        ->by($limitBy)] : []
                 ),
             ];
         });
