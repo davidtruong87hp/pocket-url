@@ -1,0 +1,24 @@
+services:
+  app:
+    image: pocket-url-redirector
+    build:
+      context: ../../../../.
+      dockerfile: infrastructures/docker-compose/apps/redirector/docker/frankenphp/Dockerfile
+      target: development
+    container_name: pocket-url-redirector-web
+    entrypoint: php artisan octane:frankenphp --watch
+    ports:
+      - '${REDIRECTOR_API_PORT:-8001}:8000'
+    volumes:
+      - ../../../../apps/redirector:/app:cached
+      - redirector-vendor:/app/vendor  # Preserve vendor from Docker build
+    networks:
+      - pocket-url-network
+
+networks:
+  pocket-url-network:
+    name: pocket-url-network
+    external: true
+
+volumes:
+  redirector-vendor:

@@ -9,17 +9,18 @@ shortener-setup: ## Setup shortener service
 		cp apps/shortener/.env.example apps/shortener/.env; \
 		$(call log_success,Created apps/shortener/.env); \
 	fi
+	@$(call log_success,Environment setup complete)
 
 .PHONY: shortener-up
 shortener-up: ## Start shortener service
 	@$(call log_info,"Starting shortener service...")
-	@docker-compose -p $(PROJECT_NAME)-shortener -f $(SHORTENER_COMPOSE_FILE) up -d
+	@docker-compose -p $(PROJECT_NAME)-shortener -f $(SHORTENER_COMPOSE_FILE) --env-file $(ENV_FILE) up -d
 	@$(call log_success,"Shortener started")
 
 .PHONY: shortener-down
 shortener-down: ## Stop shortener service
 	@$(call log_info,"Stopping shortener service...")
-	@docker-compose -p $(PROJECT_NAME)-shortener -f $(SHORTENER_COMPOSE_FILE) down
+	@docker-compose -p $(PROJECT_NAME)-shortener -f $(SHORTENER_COMPOSE_FILE) --env-file $(ENV_FILE) down
 	@$(call log_success,"Shortener stopped")
 
 .PHONY: shortener-restart
@@ -28,13 +29,13 @@ shortener-restart: shortener-down shortener-up ## Restart shortener service
 .PHONY: shortener-build
 shortener-build: ## Rebuild shortener containers
 	@$(call log_info,"Building shortener containers...")
-	@docker-compose -p $(PROJECT_NAME)-shortener -f $(SHORTENER_COMPOSE_FILE) build
+	@docker-compose -p $(PROJECT_NAME)-shortener  -f $(SHORTENER_COMPOSE_FILE) --env-file $(ENV_FILE) build
 	@$(call log_success,"Build complete")
 
 .PHONY: shortener-clean
 shortener-clean: ## Clean shortener (remove volumes)
 	@$(call log_warning,"Removing shortener volumes...")
-	@docker-compose -p $(PROJECT_NAME)-shortener -f $(SHORTENER_COMPOSE_FILE) down --volumes
+	@docker-compose -p $(PROJECT_NAME)-shortener -f $(SHORTENER_COMPOSE_FILE) --env-file $(ENV_FILE) down --volumes
 	@$(call log_success,"Shortener cleaned")
 
 ##@ Shortener - Application
@@ -50,6 +51,10 @@ shortener-artisan: ## Run artisan command (usage: make shortener-artisan CMD="mi
 .PHONY: shortener-test
 shortener-test: ## Run tests
 	@docker exec pocket-url-shortener-api php artisan test --coverage
+
+.PHONY: shortener-logs
+shortener-logs: ## Show shortener logs
+	@docker-compose -p $(PROJECT_NAME)-shortener -f $(SHORTENER_COMPOSE_FILE) --env-file $(ENV_FILE) logs
 
 ##@ Shortener - Workers
 
