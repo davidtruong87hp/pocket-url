@@ -4,16 +4,20 @@ services:
     container_name: pocket-url-shortener-api
     build:
       context: ../../../../.
-      dockerfile: infrastructures/docker-compose/apps/shortener/docker/frankenphp/Dockerfile
+      dockerfile: infrastructures/docker-compose/apps/shortener/docker/roadrunner/Dockerfile
+      target: development
     environment:
-      - DB_HOST=mysql
-      - XDEBUG_MODE=coverage
+      - OCTANE_SERVER=roadrunner
+      - XDEBUG_MODE=debug
       - XDEBUG_CLIENT_HOST=host.docker.internal
       - XDEBUG_CLIENT_PORT=9003
+    extra_hosts:
+      - "host.docker.internal:host-gateway" # For Linux
     ports:
-      - '${SHORTENER_API_PORT:-8000}:80'
+      - '${SHORTENER_API_PORT:-8000}:8000'
     volumes:
       - ../../../../apps/shortener:/app
+      - /app/vendor  # Preserve vendor from Docker build
     depends_on:
       - mysql
     networks:

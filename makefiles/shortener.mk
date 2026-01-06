@@ -30,6 +30,7 @@ shortener-restart: shortener-down shortener-up ## Restart shortener service
 shortener-build: ## Rebuild shortener containers
 	@$(call log_info,"Building shortener containers...")
 	@docker-compose -p $(PROJECT_NAME)-shortener  -f $(SHORTENER_COMPOSE_FILE) --env-file $(ENV_FILE) build
+	make shortener-up
 	@$(call log_success,"Build complete")
 
 .PHONY: shortener-clean
@@ -42,7 +43,7 @@ shortener-clean: ## Clean shortener (remove volumes)
 
 .PHONY: shortener-shell
 shortener-shell: ## Access app container shell
-	@docker exec -it pocket-url-shortener-api bash
+	@docker exec -it pocket-url-shortener-api sh
 
 .PHONY: shortener-artisan
 shortener-artisan: ## Run artisan command (usage: make shortener-artisan CMD="migrate")

@@ -17,6 +17,14 @@
             <directory>app</directory>
         </include>
     </source>
+    <coverage includeUncoveredFiles="true"
+              pathCoverage="false">
+        <report>
+            <html outputDirectory="storage/app/coverage"/>
+            <clover outputFile="storage/app/coverage.xml"/>
+            <text outputFile="php://stdout" showUncoveredFiles="true"/>
+        </report>
+    </coverage>
     <php>
         <env name="APP_ENV" value="testing"/>
         <env name="APP_MAINTENANCE_DRIVER" value="file"/>
@@ -31,5 +39,7 @@
         <env name="PULSE_ENABLED" value="false"/>
         <env name="TELESCOPE_ENABLED" value="false"/>
         <env name="NIGHTWATCH_ENABLED" value="false"/>
+        <!-- THIS IS THE KEY: Disable Octane for tests -->
+        <server name="APP_RUNNING_IN_CONSOLE" value="true"/>
     </php>
 </phpunit>
