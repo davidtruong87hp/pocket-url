@@ -4,23 +4,24 @@ FROM ghcr.io/roadrunner-server/roadrunner:2024 AS roadrunner
 # =======================================================
 # Development Stage 
 # =======================================================
-FROM php:8.5-alpine AS development
+FROM php:8.4-cli-alpine AS development
 
-# Install the php-extension-installer script
+# Copy the RoadRunner binary from the first stage
+COPY --from=roadrunner /usr/bin/rr /usr/local/bin/rr
+RUN chmod +x /usr/local/bin/rr
+
+# Install dev extensions
 RUN --mount=type=bind,from=mlocati/php-extension-installer:2,source=/usr/bin/install-php-extensions,target=/usr/local/bin/install-php-extensions \
-  install-php-extensions @composer-2 \
+  install-php-extensions \
+  @composer-2 \
   opcache \
   pdo_mysql \
   pcntl \
   sockets \
   redis \
-  zip \
+  protobuf \
   xdebug \
   pcov
-
-# Copy the RoadRunner binary from the first stage
-COPY --from=roadrunner /usr/bin/rr /usr/local/bin/rr
-RUN chmod +x /usr/local/bin/rr
 
 # Copy Xdebug configuration
 COPY infrastructures/docker-compose/apps/shortener/docker/roadrunner/xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
@@ -53,28 +54,29 @@ RUN mkdir -p storage/framework/{sessions,views,cache,testing} storage/logs boots
 # Switch to www-data user
 USER www-data
 
-EXPOSE 8000
+EXPOSE 8000 9001
 
 CMD ["php", "artisan", "octane:start", "--host=0.0.0.0", "--port=8000"]
 
 # =======================================================
 # Production Stage
 # =======================================================
-FROM php:8.5-alpine as production
+FROM php:8.4-cli-alpine AS production
 
-# Install system dependencies and PHP extensions (no xdebug)
+# Copy the RoadRunner binary
+COPY --from=roadrunner /usr/bin/rr /usr/local/bin/rr
+RUN chmod +x /usr/local/bin/rr
+
+# Install PHP extensions
 RUN --mount=type=bind,from=mlocati/php-extension-installer:2,source=/usr/bin/install-php-extensions,target=/usr/local/bin/install-php-extensions \
-  install-php-extensions @composer-2 \
+  install-php-extensions \
+  @composer-2 \
   opcache \
   pdo_mysql \
   pcntl \
   sockets \
   redis \
-  zip
-
-# Copy the RoadRunner binary
-COPY --from=roadrunner /usr/bin/rr /usr/local/bin/rr
-RUN chmod +x /usr/local/bin/rr
+  protobuf
 
 WORKDIR /app
 
@@ -102,6 +104,6 @@ RUN mkdir -p storage/framework/{sessions,views,cache,testing} storage/logs boots
 # Switch to non-root user for security
 USER www-data
 
-EXPOSE 8000
+EXPOSE 8000 9001
 
 CMD ["php", "artisan", "octane:start", "--host=0.0.0.0", "--port=8000"]

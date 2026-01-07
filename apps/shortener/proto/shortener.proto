@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package shortener;
+
+option php_namespace = "Shortener";
+option php_metadata_namespace = "GPBMetadata";
+
+service ShortenerService {
+    rpc ResolveShortcode(ResolveShortcodeRequest) returns (ResolveShortcodeResponse);
+}
+
+message ResolveShortcodeRequest {
+  string shortcode = 1;
+  string domain = 2; // Optional
+}
+
+message ResolveShortcodeResponse {
+  string destination_url = 1;
+  bool success = 2;
+  string error = 3;
+
+  ShortcodeMetadata metadata = 4;
+}
+
+message ShortcodeMetadata {
+    string short_code = 1;
+    string short_url = 2;
+    string title = 3;
+    string created_at = 4;
+}

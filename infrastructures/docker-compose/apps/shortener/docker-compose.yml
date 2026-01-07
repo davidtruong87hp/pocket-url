@@ -24,6 +24,24 @@ services:
       - shortener-api-network
       - pocket-url-network
 
+  grpc:
+    container_name: pocket-url-shortener-grpc
+    image: shortener-grpc
+    build:
+      context: ../../../../.
+      dockerfile: infrastructures/docker-compose/apps/shortener/docker/roadrunner/Dockerfile
+    ports:
+      - '${SHORTENER_GRPC_PORT:-9001}:9001'
+    command: ["rr", "serve", "-c", ".rr-grpc.yaml"]
+    volumes:
+      - ../../../../apps/shortener:/app
+      - /app/vendor  # Preserve vendor from Docker build
+    depends_on:
+      - mysql
+    networks:
+      - shortener-api-network
+      - pocket-url-network
+
   worker:
     container_name: pocket-url-shortener-worker
     image: shortener-worker

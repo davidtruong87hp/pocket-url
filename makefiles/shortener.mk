@@ -30,8 +30,8 @@ shortener-restart: shortener-down shortener-up ## Restart shortener service
 shortener-build: ## Rebuild shortener containers
 	@$(call log_info,"Building shortener containers...")
 	@docker-compose -p $(PROJECT_NAME)-shortener  -f $(SHORTENER_COMPOSE_FILE) --env-file $(ENV_FILE) build
-	make shortener-up
 	@$(call log_success,"Build complete")
+	make shortener-up
 
 .PHONY: shortener-clean
 shortener-clean: ## Clean shortener (remove volumes)
@@ -87,3 +87,23 @@ shortener-worker-restart-scheduler: ## Restart scheduler only
 shortener-urls: ## Show shortener URLs
 	@echo "$(BOLD)=== Shortener API Service ===$(NC)"
 	@echo "API: http://localhost:$(SHORTENER_API_PORT)"
+
+##@ Shortener - gRPC Service
+
+.PHONY: shortener-grpc-shell
+shortener-grpc-shell: ## Access app container shell
+	@docker exec -it pocket-url-shortener-grpc sh
+
+.PHONY: shortener-proto-generate
+shortener-proto-generate:
+	@echo "Generating gRPC PHP files..."
+	@mkdir -p apps/shortener/app/Grpc/Generated
+	@docker run --rm \
+		-v $(PWD):/workspace \
+		-w /workspace \
+		namely/protoc-all:1.51_1 \
+		-f apps/shortener/proto/shortener.proto \
+		-l php \
+		-o apps/shortener/app/Grpc/Generated
+	@echo "Done! Generated files in apps/shortener/app/Grpc/Generated/"
+	
