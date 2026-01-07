@@ -31,6 +31,7 @@ redirector-build: ## Rebuild redirector containers
 	@$(call log_info,"Building redirector containers...")
 	@docker-compose -p $(PROJECT_NAME)-redirector -f $(REDIRECTOR_COMPOSE_FILE) --env-file $(ENV_FILE) build --no-cache
 	@$(call log_success,"Build complete")
+	make redirector-up
 
 .PHONY: redirector-clean
 redirector-clean: ## Clean redirector (remove volumes)

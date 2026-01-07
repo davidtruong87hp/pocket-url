@@ -11,7 +11,7 @@ services:
       - '${REDIRECTOR_API_PORT:-8001}:8000'
     volumes:
       - ../../../../apps/redirector:/app:cached
-      - redirector-vendor:/app/vendor  # Preserve vendor from Docker build
+      - /app/vendor  # Preserve vendor from Docker build
     networks:
       - pocket-url-network
 
@@ -19,6 +19,3 @@ networks:
   pocket-url-network:
     name: pocket-url-network
     external: true
-
-volumes:
-  redirector-vendor:
