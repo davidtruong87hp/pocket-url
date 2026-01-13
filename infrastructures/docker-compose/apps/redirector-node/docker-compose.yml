@@ -1,0 +1,19 @@
+services:
+  redirector-node:
+    image: redirector-node
+    build:
+      context: ../../../../.
+      dockerfile: infrastructures/docker-compose/apps/redirector-node/docker/Dockerfile
+      target: development
+    container_name: pocket-url-redirector-node
+    ports:
+      - '${REDIRECTOR_NODE_PORT:-3000}:3000'
+    volumes:
+      - ../../../../apps/redirector-node:/app:cached
+    networks:
+      - pocket-url-network
+
+networks:
+  pocket-url-network:
+    name: pocket-url-network
+    external: true

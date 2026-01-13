@@ -1,12 +1,12 @@
-REDIRECTOR_COMPOSE_FILE := infrastructures/docker-compose/apps/redirector/docker-compose.yml
+REDIRECTOR_COMPOSE_FILE := infrastructures/docker-compose/apps/redirector-node/docker-compose.yml
 
 ##@ Redirector Service
 
 .PHONY: redirector-setup
 redirector-setup: ## Setup redirector service
 	@$(call log_info,Setting up redirector service...)
-	@if [ ! -f apps/redirector/.env ]; then \
-		cp apps/redirector/.env.example apps/redirector/.env; \
+	@if [ ! -f apps/redirector-node/.env ]; then \
+		cp apps/redirector-node/.env.example apps/redirector-node/.env; \
 		$(call log_success,Created apps/redirector/.env); \
 	fi
 	@$(call log_success,Environment setup complete)
