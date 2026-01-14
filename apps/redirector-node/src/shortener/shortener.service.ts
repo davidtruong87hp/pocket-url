@@ -24,11 +24,13 @@ export class ShortenerClient implements OnModuleInit {
 
     if (cached) {
       console.log(`Cache HIT for ${shortcode}`);
+      await this.cacheService.recordHit();
 
       return cached;
     }
 
     console.log(`Cache MISS for ${shortcode}, calling gRPC...`);
+    await this.cacheService.recordMiss();
 
     try {
       const result = await firstValueFrom(

@@ -59,4 +59,26 @@ export class CacheService {
       console.error('Cache delete error: ', error);
     }
   }
+
+  async recordHit(): Promise<void> {
+    const current = (await this.cache.get<number>('stats:hits')) || 0;
+    await this.cache.set('stats:hits', current + 1);
+  }
+
+  async recordMiss(): Promise<void> {
+    const current = (await this.cache.get<number>('stats:misses')) || 0;
+    await this.cache.set('stats:misses', current + 1);
+  }
+
+  async getStats(): Promise<{ hits: number; misses: number; hitRate: number }> {
+    const hits = (await this.cache.get<number>('stats:hits')) || 0;
+    const misses = (await this.cache.get<number>('stats:misses')) || 0;
+    const total = hits + misses;
+
+    return {
+      hits,
+      misses,
+      hitRate: (hits / total) * 100,
+    };
+  }
 }
