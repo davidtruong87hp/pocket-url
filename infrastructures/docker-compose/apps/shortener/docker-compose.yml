@@ -17,7 +17,6 @@ services:
       - '${SHORTENER_API_PORT:-8000}:8000'
     volumes:
       - ../../../../apps/shortener:/app
-      - /app/vendor  # Preserve vendor from Docker build
     depends_on:
       - mysql
     networks:
@@ -35,7 +34,6 @@ services:
     command: ["rr", "serve", "-c", ".rr-grpc.yaml"]
     volumes:
       - ../../../../apps/shortener:/app
-      - /app/vendor  # Preserve vendor from Docker build
     depends_on:
       - mysql
     networks:

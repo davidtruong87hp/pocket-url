@@ -16,6 +16,10 @@
         <include>
             <directory>app</directory>
         </include>
+        <exclude>
+            <directory>app/Grpc/Generated</directory>
+            <directory>app/Services/RabbitMQ</directory>
+        </exclude>
     </source>
     <coverage includeUncoveredFiles="true"
               pathCoverage="false">

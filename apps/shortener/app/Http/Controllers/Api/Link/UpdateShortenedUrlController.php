@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\Link;
 
+use App\Events\ShortenedUrlUpdated;
 use App\Helpers\ChangeDetector;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Link\UpdateShortenedUrlRequest;
@@ -23,6 +24,10 @@ class UpdateShortenedUrlController extends Controller
         $validated = $request->validated();
         $changes = ChangeDetector::detect($shortenedUrl, $validated);
         $shortenedUrl = $this->shortenedUrlService->update($shortenedUrl, $validated);
+
+        if ($changes && ! empty($changes['url'])) {
+            event(new ShortenedUrlUpdated($shortenedUrl));
+        }
 
         return (new ShortenedUrlResource($shortenedUrl))->additional([
             'message' => 'Shortened URL updated successfully.',

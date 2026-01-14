@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Link;
 
 use App\DTOs\Link\CreateShortenedUrlDTO;
+use App\Events\ShortenedUrlCreated;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Link\CreateShortenedUrlRequest;
 use App\Http\Resources\Link\ShortenedUrlResource;
@@ -26,6 +27,8 @@ class CreateShortenedUrlController extends Controller
         ));
 
         $shortenedUrl = $this->shortenedUrlService->create($dto);
+
+        event(new ShortenedUrlCreated($shortenedUrl));
 
         return new ShortenedUrlResource($shortenedUrl);
     }
