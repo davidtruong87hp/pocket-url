@@ -2,6 +2,7 @@
 
 namespace App\Grpc;
 
+use App\Repositories\ShortenedUrlRepository;
 use Shortener\ResolveShortcodeRequest;
 use Shortener\ResolveShortcodeResponse;
 use Shortener\ShortenerServiceInterface;
@@ -9,28 +10,34 @@ use Spiral\RoadRunner\GRPC;
 
 class ShortenerServiceHandler implements ShortenerServiceInterface
 {
-    /**
-     * Create a new class instance.
-     */
-    public function __construct()
-    {
-        //
-    }
+    public function __construct(private ShortenedUrlRepository $shortenedUrlRepository) {}
 
     public function ResolveShortcode(
         GRPC\ContextInterface $ctx,
         ResolveShortcodeRequest $in
     ): ResolveShortcodeResponse {
+        $shortenedUrl = $this->shortenedUrlRepository->getByShortCode($in->getShortcode());
         $response = new ResolveShortcodeResponse;
 
+        if (! $shortenedUrl) {
+            $response->setSuccess(false);
+            $response->setError('Not found');
+            $response->setDestinationUrl('');
+
+            return $response;
+        }
+
         $response->setSuccess(true);
-        $response->setDestinationUrl('https://google.com');
+        $response->setDestinationUrl($shortenedUrl->url);
         $response->setError('');
+
+        $shortDomain = ! empty($in->getDomain()) ? $in->getDomain() : config('shortener.short_domain');
+
         $response->setMetadata(new \Shortener\ShortcodeMetadata([
-            'short_code' => 'abcDEF',
-            'short_url' => 'https://google.com',
-            'title' => 'Google',
-            'created_at' => date('Y-m-d H:i:s'),
+            'short_code' => $shortenedUrl->shortcode,
+            'short_url' => "http://{$shortDomain}/{$shortenedUrl->shortcode}",
+            'title' => $shortenedUrl->title ?? '',
+            'created_at' => $shortenedUrl->created_at->toAtomString(),
         ]));
 
         return $response;
