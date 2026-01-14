@@ -2,6 +2,7 @@ import { Controller, Get, Res, Param } from '@nestjs/common';
 import type { Response } from 'express';
 
 import { ShortenerClient } from './shortener/shortener.service';
+import { ShortcodeNotFoundException } from './common/exceptions';
 
 @Controller()
 export class AppController {
@@ -12,7 +13,7 @@ export class AppController {
     const result = await this.shortenerClient.resolve(shortcode);
 
     if (!result) {
-      return res.status(404).send('Shortcode not found');
+      throw new ShortcodeNotFoundException(shortcode);
     }
 
     return res.redirect(301, result.destinationUrl);
