@@ -38,3 +38,4 @@ shared-clean: ## Clean shared infrastructure (remove volumes)
 infra-urls: ## Show infrastructure URLs
 	@echo "$(BOLD)=== Infrastructure Services ===$(NC)"
 	@echo "RedisInsight: http://localhost:5540"
+	@echo "RabbitMQ UI: http://localhost:15672"
