@@ -9,12 +9,12 @@ export class AppController {
 
   @Get(':shortcode')
   async redirect(@Param('shortcode') shortcode: string, @Res() res: Response) {
-    const url = await this.shortenerClient.resolve(shortcode);
+    const result = await this.shortenerClient.resolve(shortcode);
 
-    if (!url) {
+    if (!result) {
       return res.status(404).send('Shortcode not found');
     }
 
-    return res.redirect(url);
+    return res.redirect(301, result.destinationUrl);
   }
 }

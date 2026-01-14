@@ -4,7 +4,7 @@ export interface ResolveShortcodeResponse {
   success: boolean;
   destinationUrl: string;
   error?: string;
-  metadata?: {
+  metadata: {
     shortCode: string;
     shortUrl: string;
     title: string;
