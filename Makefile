@@ -11,6 +11,7 @@ include makefiles/common.mk
 include makefiles/infrastructure.mk
 include makefiles/shortener.mk
 include makefiles/redirector.mk
+include makefiles/analytics.mk
 
 .DEFAULT_GOAL := help
 
@@ -22,19 +23,19 @@ help:
 	@awk 'BEGIN {FS = ":.*##"; printf "\nUsage:\n  make $(CYAN)<target>$(NC)\n"} /^[a-zA-Z_-]+:.*?##/ { printf "  $(CYAN)%-20s$(NC) %s\n", $$1, $$2 } /^##@/ { printf "\n$(BOLD)%s$(NC)\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
 
 .PHONY: setup
-setup: infra-setup shortener-setup redirector-setup ## Complete initial setup
+setup: infra-setup shortener-setup redirector-setup analytics-setup ## Complete initial setup
 	@echo "$(GREEN)✅ All setup complete!$(NC)"
 
 .PHONY: up
-up: setup shared-up shortener-up redirector-up ## Start all services
+up: setup shared-up shortener-up redirector-up analytics-up ## Start all services
 	@echo "$(GREEN)✅ All services started!$(NC)"
 
 .PHONY: down
-down: shortener-down redirector-down shared-down ## Stop all services
+down: shortener-down redirector-down analytics-down shared-down ## Stop all services
 	@echo "$(GREEN)✅ All services stopped!$(NC)"
 
 .PHONY: clean
-clean: shortener-clean redirector-clean shared-clean ## Clean all services
+clean: shortener-clean redirector-clean analytics-clean shared-clean ## Clean all services
 	@echo "$(GREEN)✅ All services cleaned!$(NC)"
 
 .PHONY: restart
