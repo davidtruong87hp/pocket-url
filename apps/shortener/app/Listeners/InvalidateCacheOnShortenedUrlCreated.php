@@ -3,7 +3,6 @@
 namespace App\Listeners;
 
 use App\Events\ShortenedUrlCreated;
-use App\Http\Resources\Link\ShortenedUrlResource;
 use App\Jobs\PublishCacheInvalidationJob;
 
 class InvalidateCacheOnShortenedUrlCreated
@@ -18,7 +17,7 @@ class InvalidateCacheOnShortenedUrlCreated
         PublishCacheInvalidationJob::dispatch(
             'SHORTENED_URL_CREATED',
             $shortenedUrl->shortcode,
-            (new ShortenedUrlResource($shortenedUrl))->toArray(request())
+            $shortenedUrl->toArray()
         );
     }
 }

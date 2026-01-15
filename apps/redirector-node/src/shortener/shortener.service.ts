@@ -3,7 +3,7 @@ import { Client, type ClientGrpc } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
 import { grpcClientOptions } from './grpc-client.options';
 import { ShortenerService } from './shortener.interface';
-import { CachedShortCode, CacheService } from 'src/cache/cache.service';
+import { CachedShortCode, CacheService } from 'src/modules/cache/cache.service';
 
 @Injectable()
 export class ShortenerClient implements OnModuleInit {

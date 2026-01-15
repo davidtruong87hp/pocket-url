@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\DTOs\Link\CreateShortenedUrlDTO;
 use App\DTOs\Link\ListShortenedUrlDTO;
+use App\Events\ShortenedUrlUpdated;
 use App\Helpers\ChangeDetector;
 use App\Models\ShortenedUrl;
 use App\Repositories\ShortenedUrlRepository;
@@ -40,6 +41,10 @@ class ShortenedUrlService
             }
 
             $shortenedUrl->update($data);
+
+            if ($changes && ! empty($changes['url'])) {
+                event(new ShortenedUrlUpdated($shortenedUrl));
+            }
 
             return $shortenedUrl->refresh();
         });

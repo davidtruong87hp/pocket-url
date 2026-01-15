@@ -1,5 +1,5 @@
 import { Controller, Get } from '@nestjs/common';
-import { CacheService } from 'src/cache/cache.service';
+import { CacheService } from 'src/modules/cache/cache.service';
 
 @Controller('api/health')
 export class HealthController {

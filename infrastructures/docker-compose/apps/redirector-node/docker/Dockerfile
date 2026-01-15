@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY apps/redirector-node/package*.json ./
 
-RUN npm ci
+RUN npm install
 
 COPY apps/redirector-node .
 
@@ -18,7 +18,7 @@ WORKDIR /app
 
 COPY apps/redirector-node/package*.json ./
 
-RUN npm ci --only=production
+RUN npm install --only=production
 
 COPY apps/redirector-node .
 

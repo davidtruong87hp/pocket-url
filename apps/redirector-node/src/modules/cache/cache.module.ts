@@ -2,6 +2,7 @@ import KeyvRedis from '@keyv/redis';
 import { DynamicModule, Global, Module } from '@nestjs/common';
 import Keyv from 'keyv';
 import { CacheService } from './cache.service';
+import { RabbitMQModule } from '../rabbitmq/rabbitmq.module';
 
 export const CACHE_CLIENT = 'CACHE_CLIENT';
 
@@ -43,6 +44,7 @@ export class CacheRedisModule {
         },
         CacheService,
       ],
+      imports: [RabbitMQModule],
       exports: [CACHE_CLIENT, CacheService],
     };
   }
