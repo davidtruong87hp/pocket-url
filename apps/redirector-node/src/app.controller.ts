@@ -1,7 +1,7 @@
 import { Controller, Get, Res, Param } from '@nestjs/common';
 import type { Response } from 'express';
 
-import { ShortenerClient } from './shortener/shortener.service';
+import { ShortenerClient } from './modules/shortener/shortener.service';
 import { ShortcodeNotFoundException } from './common/exceptions';
 
 @Controller()
