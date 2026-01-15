@@ -6,6 +6,7 @@ import { RabbitMQModule } from './modules/rabbitmq/rabbitmq.module';
 import { ConsumersModule } from './modules/consumers/consumers.module';
 import { HealthModule } from './modules/health/health.module';
 import { ShortenerModule } from './modules/shortener/shortener.module';
+import { AnalyticsModule } from './modules/analytics/analytics.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { ShortenerModule } from './modules/shortener/shortener.module';
     ConsumersModule,
     HealthModule,
     ShortenerModule,
+    AnalyticsModule,
   ],
   controllers: [AppController],
 })

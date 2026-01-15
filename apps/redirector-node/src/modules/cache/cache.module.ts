@@ -2,7 +2,7 @@ import KeyvRedis from '@keyv/redis';
 import { DynamicModule, Global, Module } from '@nestjs/common';
 import Keyv from 'keyv';
 import { CacheService } from './cache.service';
-import { RabbitMQModule } from '../rabbitmq/rabbitmq.module';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 export const CACHE_CLIENT = 'CACHE_CLIENT';
 
@@ -12,11 +12,14 @@ export class CacheRedisModule {
   static forRootAsync(): DynamicModule {
     return {
       module: CacheRedisModule,
+      imports: [ConfigModule],
       providers: [
         {
           provide: CACHE_CLIENT,
-          useFactory: async () => {
-            const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
+          useFactory: async (configService: ConfigService) => {
+            const redisUrl =
+              configService.get<string>('REDIS_URL') ||
+              'redis://localhost:6379';
 
             console.log('Connecting to Redis: ', redisUrl);
 
@@ -41,10 +44,10 @@ export class CacheRedisModule {
 
             return keyv;
           },
+          inject: [ConfigService],
         },
         CacheService,
       ],
-      imports: [RabbitMQModule],
       exports: [CACHE_CLIENT, CacheService],
     };
   }
