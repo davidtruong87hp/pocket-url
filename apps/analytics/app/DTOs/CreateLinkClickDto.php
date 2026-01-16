@@ -9,7 +9,6 @@ class CreateLinkClickDto
      */
     public function __construct(
         public string $shortcode,
-        public string $originalUrl,
         public ?string $ipAddress,
         public ?string $userAgent,
         public ?string $referrerDomain,
@@ -27,7 +26,6 @@ class CreateLinkClickDto
     {
         return new self(
             shortcode: $data['shortcode'],
-            originalUrl: $data['original_url'],
             ipAddress: $data['ip_address'],
             userAgent: $data['user_agent'],
             referrerDomain: $data['referrer_domain'],

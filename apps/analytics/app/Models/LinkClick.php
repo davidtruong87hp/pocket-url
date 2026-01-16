@@ -11,7 +11,6 @@ class LinkClick extends Model
 
     protected $fillable = [
         'shortcode',
-        'original_url',
         'ip_address',
         'user_agent',
         'referrer_domain',

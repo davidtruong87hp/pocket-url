@@ -14,8 +14,6 @@ return new class extends Migration
         Schema::create('link_clicks', function (Blueprint $table) {
             $table->id();
             $table->string('shortcode', 20)->index();
-            $table->string('original_url', 2048);
-
             $table->string('ip_address', 45)->nullable();
             $table->text('user_agent')->nullable();
 

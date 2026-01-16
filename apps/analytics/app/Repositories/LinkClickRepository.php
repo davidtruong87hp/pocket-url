@@ -11,7 +11,6 @@ class LinkClickRepository
     {
         return LinkClick::create([
             'shortcode' => $data->shortcode,
-            'original_url' => $data->originalUrl,
             'ip_address' => $data->ipAddress,
             'user_agent' => $data->userAgent,
             'referrer_domain' => $data->referrerDomain,

@@ -1,8 +1,8 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "laravel/laravel",
+    "name": "pocket-url/analytics",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
+    "description": "Analytics service for the URL Shortener.",
     "keywords": ["laravel", "framework"],
     "license": "MIT",
     "require": {
@@ -10,10 +10,12 @@
         "laravel/framework": "^12.0",
         "laravel/octane": "^2.13",
         "laravel/sanctum": "^4.0",
-        "laravel/tinker": "^2.10.1"
+        "laravel/tinker": "^2.10.1",
+        "php-amqplib/php-amqplib": "^3.7"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
+        "jetbrains/phpstorm-stubs": "^2024.3",
         "laravel/pail": "^1.2.2",
         "laravel/pint": "^1.24",
         "laravel/sail": "^1.41",

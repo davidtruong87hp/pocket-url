@@ -18,7 +18,6 @@ class LinkClickFactory extends Factory
     {
         return [
             'shortcode' => $this->faker->lexify('??????'),
-            'original_url' => $this->faker->url(),
             'ip_address' => $this->faker->ipv4(),
             'user_agent' => $this->faker->userAgent(),
             'referrer_domain' => $this->faker->domainName(),
