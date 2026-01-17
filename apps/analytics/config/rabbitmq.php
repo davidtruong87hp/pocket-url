@@ -34,6 +34,8 @@ return [
             'instances' => env('RABBITMQ_CLICK_CONSUMERS', 1),
             'prefetch_count' => 10,
             'durable' => true,
+            'use_dlq' => true,
+            'max_retries' => 3, // Max retries before DLQ
         ],
     ],
 ];

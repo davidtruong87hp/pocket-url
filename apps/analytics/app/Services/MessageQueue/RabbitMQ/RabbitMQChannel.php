@@ -2,11 +2,11 @@
 
 namespace App\Services\MessageQueue\RabbitMQ;
 
-use App\Services\MessageQueue\MessageChannelInterface;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
+use PhpAmqpLib\Wire\AMQPTable;
 
-class RabbitMQChannel implements MessageChannelInterface
+class RabbitMQChannel
 {
     private AMQPChannel $channel;
 
@@ -83,12 +83,57 @@ class RabbitMQChannel implements MessageChannelInterface
 
     private function declareQueue(): void
     {
+        $arguments = new AMQPTable;
+
+        if ($this->config['use_dlq'] ?? false) {
+            $arguments->set('x-dead-letter-exchange', $this->config['exchange'].'.dlx');
+            $arguments->set('x-dead-letter-routing-key', $this->config['queue'].'.failed');
+        }
+
+        if (isset($this->config['max_retries'])) {
+            $args['x-max-priority'] = $this->config['max_retries'];
+        }
+
         $this->channel->queue_declare(
             $this->config['queue'],
             false,
             $this->config['durable'] ?? true,
             false,
+            false,
+            false,
+            $arguments
+        );
+
+        if ($this->config['use_dlq'] ?? false) {
+            $this->declareDLQ();
+        }
+    }
+
+    private function declareDLQ(): void
+    {
+        $dlxName = $this->config['exchange'].'.dlx';
+        $dlqName = $this->config['queue'].'.failed';
+
+        $this->channel->exchange_declare(
+            $dlxName,
+            'direct',
+            false,
+            true,
             false
+        );
+
+        $this->channel->queue_declare(
+            $dlqName,
+            false,
+            true,
+            false,
+            false
+        );
+
+        $this->channel->queue_bind(
+            $dlqName,
+            $dlxName,
+            $dlqName
         );
     }
 

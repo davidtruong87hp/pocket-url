@@ -5,6 +5,7 @@ namespace App\Services\MessageQueue\RabbitMQ;
 use App\Services\MessageQueue\Contracts\MessageConsumerInterface;
 use App\Services\MessageQueue\Contracts\MessageHandlerInterface;
 use Illuminate\Support\Facades\Log;
+use PhpAmqpLib\Exception\AMQPRuntimeException;
 use PhpAmqpLib\Exception\AMQPTimeoutException;
 use PhpAmqpLib\Message\AMQPMessage;
 use Swoole\Coroutine;
@@ -112,6 +113,12 @@ class RabbitMQConsumer implements MessageConsumerInterface
                 Coroutine::sleep(0.01);
             } catch (AMQPTimeoutException $e) {
                 Coroutine::sleep(0.01);
+            } catch (AMQPRuntimeException $e) {
+                Log::error("AMQP protocol error: {$e->getMessage()}");
+                throw $e;
+            } catch (Throwable $e) {
+                Log::error('Unexpected error in wait loop: '.$e->getMessage());
+                throw $e;
             }
         }
     }
