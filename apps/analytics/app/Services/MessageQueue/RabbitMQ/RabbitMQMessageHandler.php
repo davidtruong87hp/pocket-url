@@ -21,14 +21,30 @@ class RabbitMQMessageHandler implements MessageHandlerInterface
         $message->ack();
     }
 
-    public function handleFailure(AMQPMessage $message, Throwable $exception): void
+    public function handleFailure(AMQPMessage $message, Throwable $e): void
     {
         Log::error('Message processing failed', [
             'handler' => $this->handlerClass,
-            'error' => $exception->getMessage(),
+            'error' => $e->getMessage(),
+            'body' => $message->getBody(),
         ]);
 
-        $message->nack(true); // Requeue
+        // Check if it's a permanent failure (bad data)
+        if ($e instanceof \RuntimeException ||
+            $e instanceof \InvalidArgumentException ||
+            str_contains($e->getMessage(), 'Undefined array key')) {
+            Log::warning('Permanent failure, sending to DLQ', [
+                'error' => $e->getMessage(),
+            ]);
+
+            $message->nack(false); // Send to DLQ
+        } else {
+            Log::warning('Temporary failure, requeuing', [
+                'error' => $e->getMessage(),
+            ]);
+
+            $message->nack(true); // Requeue
+        }
     }
 
     private function parseMessage(AMQPMessage $message): array

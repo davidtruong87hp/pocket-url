@@ -17,7 +17,7 @@ class Worker
 
     public function __construct(
         private int $id,
-        private Channel $jobChannel,
+        private ?Channel $jobChannel,
         private Statistics $stats
     ) {}
 
@@ -53,7 +53,7 @@ class Worker
         return $this->running;
     }
 
-    private function processJob(array $job): void
+    public function processJob(array $job): void
     {
         $startTime = microtime(true);
 
@@ -76,7 +76,7 @@ class Worker
         }
     }
 
-    private function handleFailure(Throwable $e, array $job): void
+    public function handleFailure(Throwable $e, array $job): void
     {
         $this->stats->recordFailure();
 

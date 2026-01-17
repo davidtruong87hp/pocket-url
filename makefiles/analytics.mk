@@ -43,7 +43,7 @@ analytics-clean: ## Clean analytics (remove volumes)
 
 .PHONY: analytics-shell
 analytics-shell: ## Access app container shell
-	@docker exec -it pocket-url-analytics-api sh
+	@docker exec -it pocket-url-analytics-api bash
 
 .PHONY: analytics-artisan
 analytics-artisan: ## Run artisan command (usage: make analytics-artisan CMD="migrate")

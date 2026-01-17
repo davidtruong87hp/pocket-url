@@ -15,6 +15,7 @@ RUN apt-get update && apt-get install -y \
   zip \
   unzip \
   supervisor \
+  bash \
   && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 RUN --mount=type=bind,from=mlocati/php-extension-installer:2,source=/usr/bin/install-php-extensions,target=/usr/local/bin/install-php-extensions \
@@ -44,6 +45,14 @@ RUN pecl install redis \
 WORKDIR /app
 
 FROM base AS development
+
+# Install PCOV
+RUN pecl install pcov \
+  && docker-php-ext-enable pcov \
+  && pecl clear-cache
+
+# Copy PCOV configuration
+COPY infrastructures/docker-compose/apps/analytics/docker/swoole/pcov.ini /usr/local/etc/php/conf.d/pcov.ini
 
 COPY apps/analytics/composer.json apps/analytics/composer.lock* ./
 RUN composer install --no-interaction --no-scripts
