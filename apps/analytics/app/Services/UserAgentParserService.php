@@ -3,47 +3,53 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Cache;
+use Jenssegers\Agent\Agent;
 
 class UserAgentParserService
 {
     private const CACHE_TTL = 3600;
 
-    private array $botPatterns = [
-        'bot', 'crawler', 'spider', 'scraper', 'slurp', 'facebook',
-        'google', 'bing', 'yahoo', 'duckduckgo', 'baidu', 'yandex',
-    ];
-
     public function parse(string $userAgent): array
     {
         if (empty($userAgent)) {
-            return [];
+            return $this->getDefaultData();
         }
 
         $cacheKey = 'ua:'.md5($userAgent);
 
         return Cache::remember($cacheKey, self::CACHE_TTL, function () use ($userAgent) {
+            $agent = new Agent;
+            $agent->setUserAgent($userAgent);
+
+            $platform = $agent->platform();
+            $browser = $agent->browser();
+
             return [
-                'isBot' => $this->detectBot($userAgent),
-                'isMobile' => $this->isMobile($userAgent),
+                'isBot' => $agent->isRobot(),
+                'isMobile' => $agent->isMobile(),
+                'device_type' => $agent->deviceType(),
+                'device_brand' => $agent->device(),
+                'device_model' => null,
+                'os_name' => $platform,
+                'os_version' => $agent->version($platform),
+                'browser_name' => $browser,
+                'browser_version' => $agent->version($browser),
             ];
         });
     }
 
-    private function detectBot(string $ua): bool
+    private function getDefaultData(): array
     {
-        $ua = strtolower($ua);
-
-        foreach ($this->botPatterns as $pattern) {
-            if (str_contains($ua, $pattern)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private function isMobile(string $ua): bool
-    {
-        return (bool) preg_match('/(mobile|ipod|iphone|android|blackberry|opera mini|iemobile)/i', $ua);
+        return [
+            'device_type' => null,
+            'device_brand' => null,
+            'device_model' => null,
+            'os_name' => null,
+            'os_version' => null,
+            'browser_name' => null,
+            'browser_version' => null,
+            'is_bot' => false,
+            'is_mobile' => false,
+        ];
     }
 }

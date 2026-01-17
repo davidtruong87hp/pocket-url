@@ -19,6 +19,19 @@ class LinkClickRepository
             'is_mobile' => $data->isMobile,
             'clicked_at' => $data->clickedAt,
             'raw_data' => $data->rawData,
+            'country' => $data->country,
+            'country_name' => $data->countryName,
+            'region' => $data->region,
+            'city' => $data->city,
+            'latitude' => $data->latitude,
+            'longitude' => $data->longitude,
+            'device_type' => $data->deviceType,
+            'device_brand' => $data->deviceBrand,
+            'device_model' => $data->deviceModel,
+            'os_name' => $data->osName,
+            'os_version' => $data->osVersion,
+            'browser_name' => $data->browser,
+            'browser_version' => $data->browserVersion,
         ]);
     }
 }

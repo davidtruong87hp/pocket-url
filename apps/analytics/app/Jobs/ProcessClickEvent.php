@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\DTOs\CreateLinkClickDto;
+use App\Services\GeoLocationService;
 use App\Services\LinkClickService;
 use App\Services\UserAgentParserService;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -33,6 +34,7 @@ class ProcessClickEvent implements ShouldQueue
      */
     public function handle(
         UserAgentParserService $userAgentParser,
+        GeoLocationService $geoLocationService,
         LinkClickService $linkClickService
     ): void {
         try {
@@ -40,6 +42,8 @@ class ProcessClickEvent implements ShouldQueue
             $referrerData = $this->parseReferrer($referrerUrl);
 
             $deviceInfo = $userAgentParser->parse($this->clickData['userAgent']);
+
+            $geoData = $geoLocationService->lookup($this->clickData['ip']);
 
             $createLinkClickDto = CreateLinkClickDto::fromArray([
                 'shortcode' => $this->clickData['shortcode'],
@@ -54,6 +58,23 @@ class ProcessClickEvent implements ShouldQueue
 
                 'raw_data' => $this->clickData,
                 'clicked_at' => $this->clickData['timestamp'] ?? now(),
+
+                // Device info
+                'device_type' => $deviceInfo['device_type'] ?? null,
+                'device_brand' => $deviceInfo['device_brand'] ?? null,
+                'device_model' => $deviceInfo['device_model'] ?? null,
+                'os_name' => $deviceInfo['os_name'] ?? null,
+                'os_version' => $deviceInfo['os_version'] ?? null,
+                'browser_name' => $deviceInfo['browser_name'] ?? null,
+                'browser_version' => $deviceInfo['browser_version'] ?? null,
+
+                // Geolocation
+                'country' => $geoData['country_code'] ?? null,
+                'country_name' => $geoData['country_name'] ?? null,
+                'city' => $geoData['city'] ?? null,
+                'region' => $geoData['region'] ?? null,
+                'latitude' => $geoData['latitude'] ?? null,
+                'longitude' => $geoData['longitude'] ?? null,
             ]);
 
             $linkClickService->create($createLinkClickDto);
