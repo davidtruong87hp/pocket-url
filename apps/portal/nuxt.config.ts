@@ -11,6 +11,16 @@ export default defineNuxtConfig({
 
   css: ['~/assets/css/main.css'],
 
+  fonts: {
+    families: [
+      {
+        name: 'Outfit',
+        provider: 'google',
+        weights: [400, 500, 600, 700, 800],
+      },
+    ],
+  },
+
   // App config
   app: {
     head: {
