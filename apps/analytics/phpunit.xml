@@ -16,6 +16,11 @@
         <include>
             <directory>app</directory>
         </include>
+        <exclude>
+            <directory>app/Services/MessageQueue/RabbitMQ</directory>
+            <file>app/Console/Commands/StartRabbitMQConsumer.php</file>
+            <file>app/Console/Commands/StartTestRabbitMQConsumer.php</file>
+        </exclude>
     </source>
     <php>
         <env name="APP_ENV" value="testing"/>

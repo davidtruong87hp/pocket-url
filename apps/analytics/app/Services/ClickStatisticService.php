@@ -112,7 +112,7 @@ class ClickStatisticService
         return $this->clickStatisticRepository
             ->aggregateByPlatforms($shortcode, $date)
             ->map(fn ($group) => [
-                'name' => $group->platform_name,
+                'name' => $group->os_name,
                 'count' => $group->count,
             ])
             ->sortByDesc('count')
