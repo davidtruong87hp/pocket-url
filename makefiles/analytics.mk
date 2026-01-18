@@ -45,6 +45,10 @@ analytics-clean: ## Clean analytics (remove volumes)
 analytics-shell: ## Access app container shell
 	@docker exec -it pocket-url-analytics-api bash
 
+.PHONY: analytics-worker-shell
+analytics-worker-shell: ## Access worker container shell
+	@docker exec -it pocket-url-analytics-worker bash
+
 .PHONY: analytics-artisan
 analytics-artisan: ## Run artisan command (usage: make analytics-artisan CMD="migrate")
 	@docker exec -it pocket-url-analytics-api php artisan $(CMD)

@@ -24,6 +24,30 @@ services:
       retries: 3
       start_period: 40s
 
+  worker:
+    image: analytics-worker
+    container_name: pocket-url-analytics-worker
+    build:
+      context: ../../../../.
+      dockerfile: infrastructures/docker-compose/apps/analytics/docker/worker/Dockerfile
+      target: development
+    environment:
+      - OCTANE_SERVER=swoole
+    volumes:
+      - ../../../../apps/analytics:/app
+      - worker-logs:/var/log/supervisor
+    depends_on:
+      - postgres
+    networks:
+      - analytics-api-network
+      - pocket-url-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "supervisorctl", "status"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
   postgres:
     image: postgres:17
     container_name: pocket-url-analytics-db
@@ -49,3 +73,4 @@ networks:
 
 volumes:
   postgres-data:
+  worker-logs:
