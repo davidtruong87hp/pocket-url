@@ -1,12 +1,9 @@
 <template>
   <div class="flex items-center justify-between">
-    <button
-      class="text-theme-sm shadow-theme-xs flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-2 py-2 font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-800 sm:px-3.5 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200"
-    >
+    <base-button variant="outline">
       <Icon name="lucide:move-left" size="1.25rem" />
-
       <span class="hidden sm:inline"> Previous </span>
-    </button>
+    </base-button>
 
     <span
       class="block text-sm font-medium text-gray-700 sm:hidden dark:text-gray-400"
@@ -79,12 +76,9 @@
       </li>
     </ul>
 
-    <button
-      class="text-theme-sm shadow-theme-xs flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-2 py-2 font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-800 sm:px-3.5 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/3 dark:hover:text-gray-200"
-    >
+    <base-button variant="outline">
       <span class="hidden sm:inline"> Next </span>
-
       <Icon name="lucide:move-right" size="1.25rem" />
-    </button>
+    </base-button>
   </div>
 </template>

@@ -32,19 +32,10 @@ defineEmits(['close'])
           </div>
           <div class="flex gap-6 px-2 mt-6 justify-end">
             <div class="flex items-center w-full gap-3 sm:w-auto">
-              <button
-                @click="$emit('close')"
-                type="button"
-                class="flex w-full justify-center rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/3 sm:w-auto"
+              <base-button variant="outline" @click="$emit('close')"
+                >Cancel</base-button
               >
-                Cancel
-              </button>
-              <button
-                type="button"
-                class="flex w-full justify-center rounded-lg bg-error-500 px-4 py-2.5 text-sm font-medium text-white hover:bg-error-600 sm:w-auto"
-              >
-                Delete Link
-              </button>
+              <base-button variant="danger">Delete Link</base-button>
             </div>
           </div>
         </form>

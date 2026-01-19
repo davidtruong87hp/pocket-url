@@ -21,11 +21,8 @@ definePageMeta({
           </div>
 
           <!-- Sign In Button -->
-          <NuxtLink
-            to="/sign-in"
-            class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            Sign In
+          <NuxtLink to="/sign-in">
+            <base-button>Sign In</base-button>
           </NuxtLink>
         </div>
       </div>
@@ -50,11 +47,8 @@ definePageMeta({
         </p>
 
         <!-- CTA Button -->
-        <NuxtLink
-          to="/sign-up"
-          class="inline-block px-8 py-4 bg-blue-600 text-white text-lg font-semibold rounded-lg hover:bg-blue-700 transition-colors"
-        >
-          Get Started Free
+        <NuxtLink to="/sign-up">
+          <base-button size="lg"> Get Started Free </base-button>
         </NuxtLink>
 
         <!-- Simple Stats -->
