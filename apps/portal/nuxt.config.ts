@@ -34,7 +34,7 @@ export default defineNuxtConfig({
     plugins: [tailwindcss()],
   },
 
-  modules: ['@nuxt/image', '@nuxt/fonts'],
+  modules: ['@nuxt/image', '@nuxt/fonts', '@nuxtjs/color-mode'],
 
   components: [
     {

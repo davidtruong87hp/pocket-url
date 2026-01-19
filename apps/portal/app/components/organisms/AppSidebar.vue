@@ -15,21 +15,7 @@ const selected = ref('Dashboard')
       class="flex items-center gap-2 pt-8 sidebar-header pb-7"
     >
       <nuxt-link href="/dashboard">
-        <span class="logo" :class="sidebarToggle ? 'hidden' : ''">
-          <nuxt-img class="dark:hidden" src="/logo/full-light.svg" alt="Logo" />
-          <nuxt-img
-            class="hidden dark:block"
-            src="/logo/full-dark.svg"
-            alt="Logo"
-          />
-        </span>
-
-        <nuxt-img
-          class="logo-icon"
-          :class="sidebarToggle ? 'lg:block' : 'hidden'"
-          src="/logo/icon-light.svg"
-          alt="Logo"
-        />
+        <base-logo class="h-18" />
       </nuxt-link>
     </div>
     <!-- SIDEBAR HEADER -->

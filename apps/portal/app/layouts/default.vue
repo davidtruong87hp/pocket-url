@@ -15,7 +15,7 @@
       <!-- ===== Header End ===== -->
 
       <!-- ===== Main Content Start ===== -->
-      <main>
+      <main class="h-screen dark:border-gray-800 dark:bg-gray-900">
         <div class="mx-auto max-w-(--breakpoint-2xl) p-4 md:p-6">
           <!-- Breadcrumb Start -->
           <breadcrumbs />
