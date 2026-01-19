@@ -21,9 +21,11 @@ const logoSrc = computed(() => {
 </script>
 
 <template>
-  <nuxt-img
-    :src="logoSrc"
-    alt="Logo"
-    :class="[collapsed ? 'w-full' : 'h-8', props.class]"
-  />
+  <ClientOnly>
+    <nuxt-img
+      :src="logoSrc"
+      alt="Logo"
+      :class="[collapsed ? 'w-full' : 'h-8', props.class]"
+    />
+  </ClientOnly>
 </template>
