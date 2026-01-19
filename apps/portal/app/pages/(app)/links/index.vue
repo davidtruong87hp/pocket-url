@@ -1,3 +1,7 @@
+<script setup lang="ts">
+const isEditLinkModal = ref(false)
+</script>
+
 <template>
   <div
     class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/3"
@@ -68,7 +72,7 @@
           </button>
 
           <button
-            @click="isTaskModalModal = true"
+            @click="isEditLinkModal = true"
             class="inline-flex items-center gap-2 rounded-lg bg-brand-500 px-4 py-2.5 text-sm font-medium text-white shadow-theme-xs hover:bg-brand-600"
           >
             Create Link
@@ -97,5 +101,7 @@
     >
       <links-table />
     </div>
+
+    <link-edit-modal v-if="isEditLinkModal" @close="isEditLinkModal = false" />
   </div>
 </template>

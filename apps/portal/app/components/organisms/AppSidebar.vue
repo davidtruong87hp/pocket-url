@@ -69,8 +69,8 @@ const selected = ref('Dashboard')
 
           <ul class="flex flex-col gap-4 mb-6">
             <li>
-              <a
-                href="#"
+              <nuxt-link
+                href="/dashboard"
                 @click.prevent="
                   selected = selected === 'Dashboard' ? '' : 'Dashboard'
                 "
@@ -130,12 +130,12 @@ const selected = ref('Dashboard')
                     stroke-linejoin="round"
                   />
                 </svg>
-              </a>
+              </nuxt-link>
             </li>
 
             <li>
-              <a
-                href="/"
+              <nuxt-link
+                href="/links"
                 @click="selected = selected === 'Calendar' ? '' : 'Calendar'"
                 class="menu-item group"
                 :class="
@@ -170,12 +170,12 @@ const selected = ref('Dashboard')
                 >
                   Links
                 </span>
-              </a>
+              </nuxt-link>
             </li>
 
             <li>
-              <a
-                href="/"
+              <nuxt-link
+                href="/analytics"
                 @click="selected = selected === 'Profile' ? '' : 'Profile'"
                 class="menu-item group"
                 :class="
@@ -210,7 +210,7 @@ const selected = ref('Dashboard')
                 >
                   Analytics
                 </span>
-              </a>
+              </nuxt-link>
             </li>
           </ul>
         </div>
