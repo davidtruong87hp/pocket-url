@@ -1,0 +1,22 @@
+services:
+  portal:
+    image: portal
+    build:
+      context: ../../../../.
+      dockerfile: infrastructures/docker-compose/apps/portal/docker/Dockerfile
+      target: development
+    container_name: pocket-url-portal
+    ports:
+      - '${PORTAL_PORT:-8888}:3000'
+    environment:
+      - API_GATEWAY_URL=pocket-url-shortener-api:${SHORTENER_API_PORT}
+    volumes:
+      - ../../../../apps/portal:/app:cached
+      - /app/node_modules
+    networks:
+      - pocket-url-network
+
+networks:
+  pocket-url-network:
+    name: pocket-url-network
+    external: true

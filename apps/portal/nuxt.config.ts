@@ -5,10 +5,6 @@ export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
 
-  devServer: {
-    port: 8888,
-  },
-
   css: ['~/assets/css/main.css'],
 
   fonts: {
