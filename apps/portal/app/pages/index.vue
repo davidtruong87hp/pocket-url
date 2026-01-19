@@ -1,3 +1,9 @@
+<script setup lang="ts">
+definePageMeta({
+  layout: false,
+})
+</script>
+
 <template>
   <div class="min-h-screen bg-white dark:bg-gray-900">
     <header class="border-b border-gray-200 dark:border-gray-800">

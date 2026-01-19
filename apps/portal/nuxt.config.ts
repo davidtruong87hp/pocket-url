@@ -39,4 +39,11 @@ export default defineNuxtConfig({
   },
 
   modules: ['@nuxt/image', '@nuxt/fonts'],
+
+  components: [
+    {
+      path: '~/components',
+      pathPrefix: false,
+    },
+  ],
 })
