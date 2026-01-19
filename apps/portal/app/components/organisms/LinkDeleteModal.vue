@@ -19,12 +19,13 @@ defineEmits(['close'])
           </p>
         </div>
         <!-- close btn -->
-        <button
+        <base-button
+          variant="ghost"
+          class="absolute right-5 top-5 z-999"
           @click="$emit('close')"
-          class="transition-color absolute right-5 top-5 z-999 flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-gray-400 hover:bg-gray-200 hover:text-gray-600 dark:bg-gray-700 dark:bg-white/[0.05] dark:text-gray-400 dark:hover:bg-white/[0.07] dark:hover:text-gray-300 sm:h-11 sm:w-11"
         >
           <Icon name="lucide:x" size="1.25rem" />
-        </button>
+        </base-button>
 
         <form class="flex flex-col">
           <div class="overflow-y-auto px-2">
@@ -32,9 +33,7 @@ defineEmits(['close'])
           </div>
           <div class="flex gap-6 px-2 mt-6 justify-end">
             <div class="flex items-center w-full gap-3 sm:w-auto">
-              <base-button variant="outline" @click="$emit('close')"
-                >Cancel</base-button
-              >
+              <base-button @click="$emit('close')">Cancel</base-button>
               <base-button variant="danger">Delete Link</base-button>
             </div>
           </div>

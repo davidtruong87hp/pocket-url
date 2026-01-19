@@ -109,12 +109,10 @@ const formatDate = (date: string) => {
                       >
                         pocket.url/{{ link.shortCode }}
                       </a>
-                      <button
-                        class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
-                        title="Copy to clipboard"
-                      >
-                        <Icon name="lucide:copy" />
-                      </button>
+                      <base-button variant="ghost" title="Copy to clipboard">
+                        <Icon name="lucide:copy" size="1rem" />
+                      </base-button>
+
                       <span class="text-gray-400 dark:text-gray-500">•</span>
                       <a
                         :href="link.originalUrl"
@@ -131,12 +129,13 @@ const formatDate = (date: string) => {
                     class="flex items-center gap-4 mt-3 text-xs text-gray-500 dark:text-gray-400"
                   >
                     <!-- Click Data -->
-                    <button
-                      class="flex items-center gap-1.5 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
+                    <base-button
+                      variant="ghost"
+                      class="hover:text-gray-700 hover:bg-transparent dark:hover:text-gray-300"
                     >
                       <Icon name="lucide:eye" size="1rem" />
                       <span class="font-medium">Click data</span>
-                    </button>
+                    </base-button>
 
                     <!-- Created Date -->
                     <div class="flex items-center gap-1.5">
@@ -148,12 +147,9 @@ const formatDate = (date: string) => {
 
                 <!-- Actions Menu -->
                 <div class="relative">
-                  <button
-                    @click="showMenu = !showMenu"
-                    class="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
-                  >
+                  <base-button variant="ghost" @click="showMenu = !showMenu">
                     <Icon name="lucide:ellipsis-vertical" size="1.25rem" />
-                  </button>
+                  </base-button>
 
                   <!-- Dropdown Menu -->
                   <Transition

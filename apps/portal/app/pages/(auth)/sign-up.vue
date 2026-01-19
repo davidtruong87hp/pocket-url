@@ -89,7 +89,7 @@ definePageMeta({
 
           <!-- Button -->
           <div>
-            <base-button class="w-full">Sign Up</base-button>
+            <base-button variant="primary" class="w-full">Sign Up</base-button>
           </div>
         </div>
       </form>

@@ -1,6 +1,6 @@
 <template>
   <div class="flex items-center justify-between">
-    <base-button variant="outline">
+    <base-button>
       <Icon name="lucide:move-left" size="1.25rem" />
       <span class="hidden sm:inline"> Previous </span>
     </base-button>
@@ -76,7 +76,7 @@
       </li>
     </ul>
 
-    <base-button variant="outline">
+    <base-button>
       <span class="hidden sm:inline"> Next </span>
       <Icon name="lucide:move-right" size="1.25rem" />
     </base-button>

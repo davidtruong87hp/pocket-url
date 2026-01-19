@@ -38,13 +38,14 @@ const notifying = ref(true)
         </nuxt-link>
 
         <!-- Application nav menu button -->
-        <button
-          class="z-99999 flex h-10 w-10 items-center justify-center rounded-lg text-gray-700 hover:bg-gray-100 lg:hidden dark:text-gray-400 dark:hover:bg-gray-800"
+        <base-button
+          variant="ghost"
+          class="z-99999 text-gray-700 hover:bg-gray-100 lg:hidden dark:text-gray-400 dark:hover:bg-gray-800"
           :class="menuToggle ? 'bg-gray-100 dark:bg-gray-800' : ''"
-          @click.stop="menuToggle = !menuToggle"
+          @click="menuToggle = !menuToggle"
         >
           <Icon name="lucide:menu" />
-        </button>
+        </base-button>
         <!-- Application nav menu button -->
       </div>
 
@@ -87,12 +88,9 @@ const notifying = ref(true)
                   Notification
                 </h5>
 
-                <button
-                  @click="dropdownOpen = false"
-                  class="text-gray-500 dark:text-gray-400"
-                >
+                <base-button variant="ghost" @click="dropdownOpen = false">
                   <Icon name="lucide:x" />
-                </button>
+                </base-button>
               </div>
 
               <a

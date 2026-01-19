@@ -76,13 +76,9 @@ const formatDateTime = (date: string) => {
         <div class="flex items-center gap-2 shrink-0">
           <!-- More Menu -->
           <div class="relative">
-            <button
-              @click="showMenu = !showMenu"
-              class="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
-              title="More options"
-            >
-              <Icon name="lucide:ellipsis-vertical" size="1.25rem" />
-            </button>
+            <base-button variant="ghost" @click="showMenu = !showMenu">
+              <Icon name="lucide:more-vertical" size="1.25rem" />
+            </base-button>
 
             <!-- Dropdown -->
             <Transition
@@ -99,7 +95,7 @@ const formatDateTime = (date: string) => {
               >
                 <button
                   class="w-full px-4 py-2 text-left text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20"
-                  @click="$emit('delete')"
+                  @click="emit('delete')"
                 >
                   Delete
                 </button>
@@ -108,13 +104,9 @@ const formatDateTime = (date: string) => {
           </div>
 
           <!-- Edit Button -->
-          <button
-            @click="emit('edit')"
-            class="px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors flex items-center gap-2"
-            title="Edit"
-          >
+          <base-button variant="ghost" @click="emit('edit')">
             <Icon name="lucide:edit" size="1.5rem" />
-          </button>
+          </base-button>
         </div>
       </div>
     </div>
@@ -136,12 +128,9 @@ const formatDateTime = (date: string) => {
           >
             {{ link.shortDomain }}/{{ link.shortCode }}
           </a>
-          <button
-            class="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
-            title="Copy to clipboard"
-          >
+          <base-button variant="ghost" title="Copy to clipboard">
             <Icon name="lucide:copy" size="1.25rem" />
-          </button>
+          </base-button>
         </div>
       </div>
 

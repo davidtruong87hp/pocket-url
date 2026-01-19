@@ -37,7 +37,9 @@ definePageMeta({
 
         <!-- Button -->
         <div>
-          <base-button class="w-full">Send Reset Link</base-button>
+          <base-button variant="primary" class="w-full"
+            >Send Reset Link</base-button
+          >
         </div>
       </div>
     </form>

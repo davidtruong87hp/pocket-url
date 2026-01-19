@@ -22,7 +22,7 @@ definePageMeta({
 
           <!-- Sign In Button -->
           <NuxtLink to="/sign-in">
-            <base-button>Sign In</base-button>
+            <base-button variant="primary">Sign In</base-button>
           </NuxtLink>
         </div>
       </div>
@@ -48,7 +48,9 @@ definePageMeta({
 
         <!-- CTA Button -->
         <NuxtLink to="/sign-up">
-          <base-button size="lg"> Get Started Free </base-button>
+          <base-button variant="primary" size="lg">
+            Get Started Free
+          </base-button>
         </NuxtLink>
 
         <!-- Simple Stats -->
