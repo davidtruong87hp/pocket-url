@@ -41,6 +41,8 @@ export default defineNuxtConfig({
     '@nuxtjs/color-mode',
     '@nuxt/icon',
     'nuxt-auth-sanctum',
+    '@vee-validate/nuxt',
+    'nuxt-toast',
   ],
 
   colorMode: {
@@ -89,6 +91,23 @@ export default defineNuxtConfig({
     csrf: {
       cookie: 'XSRF-TOKEN',
       header: 'X-XSRF-TOKEN',
+    },
+  },
+
+  veeValidate: {
+    autoImports: true,
+    componentNames: {
+      Form: 'VeeForm',
+      Field: 'VeeField',
+      FieldArray: 'VeeFieldArray',
+      ErrorMessage: 'VeeErrorMessage',
+    },
+  },
+
+  toast: {
+    composableName: 'useNotification',
+    settings: {
+      position: 'topRight',
     },
   },
 })

@@ -1,31 +1,80 @@
 <script setup lang="ts">
+import { useField } from 'vee-validate'
+
 interface Props {
+  name: string
   modelValue?: string
   placeholder?: string
   disabled?: boolean
   readonly?: boolean
   required?: boolean
-  error?: boolean
   label?: string
   hint?: string
   id?: string
-  name?: string
   size?: 'sm' | 'md' | 'lg'
   autocomplete?: string
   showToggle?: boolean
+  rules?: any
 }
 
 const props = withDefaults(defineProps<Props>(), {
   showToggle: true,
   size: 'md',
   autocomplete: 'current-password',
+  modelValue: '',
 })
 
 const emit = defineEmits<{
   'update:modelValue': [value: string]
-  blur: [event: FocusEvent]
-  focus: [event: FocusEvent]
 }>()
+
+const {
+  value: inputValue,
+  errorMessage,
+  handleBlur,
+  handleChange,
+} = useField(() => props.name, props.rules, {
+  initialValue: props.modelValue,
+  syncVModel: true,
+})
+
+const inputId = computed(() => {
+  if (props.id) return props.id
+  if (props.name) return `input-${props.name}`
+  return undefined
+})
+
+const sizeClasses = {
+  sm: 'px-3 py-1.5 text-sm',
+  md: 'px-4 py-2.5 text-base',
+  lg: 'px-5 py-3 text-lg',
+}
+
+const inputClasses = computed(() => [
+  'w-full rounded-lg border transition-colors',
+  'focus:outline-none focus:ring-2 focus:ring-offset-0',
+  'disabled:bg-gray-100 disabled:cursor-not-allowed',
+  'dark:bg-gray-900 dark:disabled:bg-gray-800',
+  sizeClasses[props.size],
+  props.showToggle ? 'pr-12' : '',
+  errorMessage.value
+    ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20'
+    : 'border-gray-300 dark:border-gray-700 focus:border-blue-500 focus:ring-blue-500/20',
+])
+
+// Sync with parent
+watch(inputValue, (newValue) => {
+  emit('update:modelValue', newValue)
+})
+
+watch(
+  () => props.modelValue,
+  (newValue) => {
+    if (newValue !== inputValue.value) {
+      inputValue.value = newValue
+    }
+  }
+)
 
 const showPassword = ref(false)
 
@@ -39,7 +88,7 @@ const togglePassword = () => {
     <!-- Label -->
     <label
       v-if="label"
-      :for="id"
+      :for="inputId"
       class="mb-1.5 block text-sm font-medium text-gray-800 dark:text-white/90"
     >
       {{ label }}
@@ -48,35 +97,18 @@ const togglePassword = () => {
 
     <div class="relative">
       <input
-        :id="id"
+        :id="inputId"
         :type="showPassword ? 'text' : 'password'"
         :name="name"
-        :value="modelValue ?? ''"
+        :value="inputValue"
         :placeholder="placeholder"
         :disabled="disabled"
         :readonly="readonly"
         :required="required"
         :autocomplete="autocomplete"
-        :class="[
-          'w-full rounded-lg border transition-colors',
-          'focus:outline-none focus:ring-2 focus:ring-offset-0',
-          'disabled:bg-gray-100 disabled:cursor-not-allowed disabled:text-gray-500',
-          'dark:bg-gray-900 dark:disabled:bg-gray-800',
-          size === 'sm'
-            ? 'px-3 py-1.5 text-sm'
-            : size === 'lg'
-              ? 'px-5 py-3 text-lg'
-              : 'px-4 py-2.5 text-base',
-          showToggle ? 'pr-12' : '',
-          error
-            ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20'
-            : 'border-gray-300 dark:border-gray-700 focus:border-blue-500 focus:ring-blue-500/20',
-        ]"
-        @input="
-          $emit('update:modelValue', ($event.target as HTMLInputElement).value)
-        "
-        @blur="$emit('blur', $event)"
-        @focus="$emit('focus', $event)"
+        :class="inputClasses"
+        @input="handleChange"
+        @blur="handleBlur"
       />
 
       <!-- Toggle visibility button -->
@@ -96,15 +128,18 @@ const togglePassword = () => {
 
     <!-- Hint -->
     <p
-      v-if="hint && !error"
+      v-if="hint && !errorMessage"
       class="mt-1.5 text-sm text-gray-500 dark:text-gray-400"
     >
       {{ hint }}
     </p>
 
     <!-- Error -->
-    <p v-if="error" class="mt-1.5 text-sm text-error-600 dark:text-error-400">
-      {{ error }}
+    <p
+      v-if="errorMessage"
+      class="mt-1.5 text-sm text-error-600 dark:text-error-400"
+    >
+      {{ errorMessage }}
     </p>
   </div>
 </template>

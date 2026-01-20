@@ -1,32 +1,45 @@
 <script setup lang="ts">
+import { useField } from 'vee-validate'
+
 interface Props {
+  name: string
   modelValue?: string | number
   type?: 'text' | 'password' | 'email' | 'number' | 'tel' | 'url' | 'search'
   placeholder?: string
   disabled?: boolean
   readonly?: boolean
   required?: boolean
-  error?: string
   label?: string
   hint?: string
   id?: string
-  name?: string
   autocomplete?: string
   size?: 'sm' | 'md' | 'lg'
   class?: string
+  rules?: any // Validation rules
 }
 
 const props = withDefaults(defineProps<Props>(), {
   type: 'text',
   size: 'md',
+  modelValue: '',
 })
 
 const emit = defineEmits<{
   'update:modelValue': [value: string | number]
   blur: [event: FocusEvent]
   focus: [event: FocusEvent]
-  input: [event: Event]
 }>()
+
+const {
+  value: inputValue,
+  errorMessage,
+  handleBlur,
+  handleChange,
+  meta,
+} = useField(() => props.name, props.rules, {
+  initialValue: props.modelValue,
+  syncVModel: true,
+})
 
 const inputId = computed(() => {
   if (props.id) return props.id
@@ -47,11 +60,26 @@ const inputClasses = computed(() => [
   'disabled:bg-gray-100 disabled:cursor-not-allowed disabled:text-gray-500',
   'dark:bg-gray-900 dark:disabled:bg-gray-800',
   sizeClasses[props.size],
-  props.error
+  errorMessage.value
     ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20'
     : 'border-gray-300 dark:border-gray-700 focus:border-blue-500 focus:ring-blue-500/20',
   props.class,
 ])
+
+// sync with parent v-model
+watch(inputValue, (newValue) => {
+  emit('update:modelValue', newValue)
+})
+
+// Update from parent
+watch(
+  () => props.modelValue,
+  (newValue) => {
+    if (newValue !== inputValue.value) {
+      inputValue.value = newValue
+    }
+  }
+)
 </script>
 
 <template>
@@ -70,31 +98,32 @@ const inputClasses = computed(() => [
       :id="inputId"
       :type="type"
       :name="name"
-      :value="modelValue ?? ''"
+      :value="inputValue"
       :placeholder="placeholder"
       :disabled="disabled"
       :readonly="readonly"
       :required="required"
       :autocomplete="autocomplete"
       :class="inputClasses"
-      @input="
-        $emit('update:modelValue', ($event.target as HTMLInputElement).value)
-      "
-      @blur="$emit('blur', $event)"
+      @input="handleChange"
+      @blur="handleBlur"
       @focus="$emit('focus', $event)"
     />
 
     <!-- Hint text -->
     <p
-      v-if="hint && !error"
+      v-if="hint && !errorMessage"
       class="mt-1.5 text-sm text-gray-500 dark:text-gray-400"
     >
       {{ hint }}
     </p>
 
     <!-- Error message -->
-    <p v-if="error" class="mt-1.5 text-sm text-error-600 dark:text-error-400">
-      {{ error }}
+    <p
+      v-if="errorMessage"
+      class="mt-1.5 text-sm text-error-600 dark:text-error-400"
+    >
+      {{ errorMessage }}
     </p>
   </div>
 </template>
