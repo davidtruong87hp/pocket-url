@@ -9,7 +9,7 @@ services:
     ports:
       - '${PORTAL_PORT:-8888}:3000'
     environment:
-      - API_GATEWAY_URL=pocket-url-shortener-api:${SHORTENER_API_PORT}
+      - NUXT_PUBLIC_API_GATEWAY_URL=http://shortener-api:${SHORTENER_API_PORT}
     volumes:
       - ../../../../apps/portal:/app:cached
       - /app/node_modules

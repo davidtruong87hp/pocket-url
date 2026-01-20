@@ -1,7 +1,22 @@
 <script setup lang="ts">
 definePageMeta({
   layout: 'auth',
+  middleware: 'sanctum:guest',
 })
+
+const { login } = useSanctumAuth()
+
+const formData = ref({
+  email: '',
+  password: '',
+})
+
+const handleFormSubmit = async () => {
+  await login({
+    email: formData.value.email,
+    password: formData.value.password,
+  })
+}
 </script>
 
 <template>
@@ -17,18 +32,20 @@ definePageMeta({
       </p>
     </div>
     <div>
-      <form>
+      <form method="post" @submit.prevent="handleFormSubmit">
         <div class="space-y-5">
           <base-input
             type="email"
             name="email"
             label="Email"
             :required="true"
+            v-model="formData.email"
             placeholder="info@email.com"
           />
           <base-password-input
             label="Password"
             placeholder="Enter your password"
+            v-model="formData.password"
           />
           <div class="flex items-center justify-between">
             <nuxt-link

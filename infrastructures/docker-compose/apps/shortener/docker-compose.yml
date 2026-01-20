@@ -1,5 +1,5 @@
 services:
-  app:
+  shortener-api:
     image: shortener-api
     container_name: pocket-url-shortener-api
     build:

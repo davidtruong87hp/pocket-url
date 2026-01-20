@@ -18,7 +18,9 @@ class ProfileControllerTest extends TestCase
         Sanctum::actingAs(UserFactory::new()->create());
 
         $this->getJson(self::API_ENDPOINT)->assertJsonStructure([
-            'user',
+            'id',
+            'name',
+            'email',
         ]);
     }
 

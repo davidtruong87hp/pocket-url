@@ -2,6 +2,7 @@ import tailwindcss from '@tailwindcss/vite'
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+  ssr: false,
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
 
@@ -34,7 +35,13 @@ export default defineNuxtConfig({
     plugins: [tailwindcss()],
   },
 
-  modules: ['@nuxt/image', '@nuxt/fonts', '@nuxtjs/color-mode', '@nuxt/icon'],
+  modules: [
+    '@nuxt/image',
+    '@nuxt/fonts',
+    '@nuxtjs/color-mode',
+    '@nuxt/icon',
+    'nuxt-auth-sanctum',
+  ],
 
   colorMode: {
     classSuffix: '',
@@ -48,4 +55,40 @@ export default defineNuxtConfig({
       pathPrefix: false,
     },
   ],
+
+  nitro: {
+    devProxy: {
+      '/gateway': {
+        target: import.meta.env.NUXT_PUBLIC_API_GATEWAY_URL,
+        changeOrigin: true,
+      },
+    },
+  },
+
+  sanctum: {
+    mode: 'token',
+    baseUrl: 'http://localhost:8888/gateway',
+    origin: 'http://localhost:8888',
+    endpoints: {
+      csrf: '/sanctum/csrf-cookie',
+      login: '/api/login',
+      logout: '/api/logout',
+      user: '/api/profile',
+    },
+    userStateKey: 'sanctum.user.identity',
+    client: {
+      retry: false,
+    },
+    redirect: {
+      keepRequestedRoute: false,
+      onLogin: '/dashboard',
+      onLogout: '/',
+      onAuthOnly: '/sign-in',
+      onGuestOnly: '/dashboard',
+    },
+    csrf: {
+      cookie: 'XSRF-TOKEN',
+      header: 'X-XSRF-TOKEN',
+    },
+  },
 })
