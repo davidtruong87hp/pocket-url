@@ -7,7 +7,7 @@ definePageMeta({
   middleware: 'sanctum:guest',
 })
 
-const { register } = useAuth()
+const { signUp } = useAuth()
 const { handleServerErrors } = useFormServerErrors()
 
 const schema = object({
@@ -21,11 +21,11 @@ const schema = object({
 
 const loading = ref(false)
 
-const handleRegister = async (values: any, ctx: SubmissionContext) => {
+const handleFormSubmit = async (values: any, ctx: SubmissionContext) => {
   loading.value = true
 
   try {
-    await register({
+    await signUp({
       name: `${values.fname} ${values.lname}`,
       email: values.email,
       password: values.password,
@@ -61,7 +61,7 @@ const handleRegister = async (values: any, ctx: SubmissionContext) => {
     <div>
       <VeeForm
         :validation-schema="schema"
-        @submit="handleRegister"
+        @submit="handleFormSubmit"
         class="space-y-5"
         v-slot="{ errors }"
       >

@@ -1,27 +1,22 @@
-interface User {
-  id: number
-  name: string
-  email: string
-  avatar?: string
-}
-
-interface RegisterPayload {
-  name: string
-  email: string
-  password: string
-  password_confirmation: string
-}
-
-interface RegisterResponse {
-  token: string
-  user: User
-}
+import type {
+  AuthResponse,
+  SignInCredentials,
+  SignUpPayload,
+  User,
+} from '~/types'
 
 export const useAuth = () => {
   const { user, isAuthenticated, login, logout } = useSanctumAuth<User>()
 
-  const register = async (payload: RegisterPayload) => {
-    const response: RegisterResponse | null = await $fetch(
+  const signIn = async (payload: SignInCredentials) => {
+    await login({
+      email: payload.email,
+      password: payload.password,
+    })
+  }
+
+  const signUp = async (payload: SignUpPayload) => {
+    const response: AuthResponse | null = await $fetch(
       '/gateway/api/register',
       {
         method: 'POST',
@@ -30,7 +25,7 @@ export const useAuth = () => {
     )
 
     if (response?.token) {
-      await login({
+      await signIn({
         email: payload.email,
         password: payload.password,
       })
@@ -40,8 +35,8 @@ export const useAuth = () => {
   return {
     user,
     isAuthenticated,
-    login,
+    signIn,
     logout,
-    register,
+    signUp,
   }
 }

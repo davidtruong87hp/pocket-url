@@ -7,7 +7,7 @@ definePageMeta({
   middleware: 'sanctum:guest',
 })
 
-const { login } = useSanctumAuth()
+const { signIn } = useAuth()
 const { handleServerErrors } = useFormServerErrors()
 
 const schema = object({
@@ -21,7 +21,7 @@ const handleFormSubmit = async (values: any, ctx: SubmissionContext) => {
   loading.value = true
 
   try {
-    await login({
+    await signIn({
       email: values.email,
       password: values.password,
     })

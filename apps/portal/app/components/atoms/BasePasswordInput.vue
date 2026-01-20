@@ -1,23 +1,8 @@
 <script setup lang="ts">
 import { useField } from 'vee-validate'
+import type { PasswordInputProps } from '~/types'
 
-interface Props {
-  name: string
-  modelValue?: string
-  placeholder?: string
-  disabled?: boolean
-  readonly?: boolean
-  required?: boolean
-  label?: string
-  hint?: string
-  id?: string
-  size?: 'sm' | 'md' | 'lg'
-  autocomplete?: string
-  showToggle?: boolean
-  rules?: any
-}
-
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<PasswordInputProps>(), {
   showToggle: true,
   size: 'md',
   autocomplete: 'current-password',

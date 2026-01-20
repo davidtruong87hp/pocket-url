@@ -1,24 +1,8 @@
 <script setup lang="ts">
 import { useField } from 'vee-validate'
+import type { BaseInputProps } from '~/types'
 
-interface Props {
-  name: string
-  modelValue?: string | number
-  type?: 'text' | 'password' | 'email' | 'number' | 'tel' | 'url' | 'search'
-  placeholder?: string
-  disabled?: boolean
-  readonly?: boolean
-  required?: boolean
-  label?: string
-  hint?: string
-  id?: string
-  autocomplete?: string
-  size?: 'sm' | 'md' | 'lg'
-  class?: string
-  rules?: any // Validation rules
-}
-
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<BaseInputProps>(), {
   type: 'text',
   size: 'md',
   modelValue: '',
