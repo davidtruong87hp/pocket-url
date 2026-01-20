@@ -1,21 +1,42 @@
 <script setup lang="ts">
+import { object, string } from 'yup'
+import type { SubmissionContext } from 'vee-validate'
+
 definePageMeta({
   layout: 'auth',
   middleware: 'sanctum:guest',
 })
 
 const { login } = useSanctumAuth()
+const { handleServerErrors } = useFormServerErrors()
 
-const formData = ref({
-  email: '',
-  password: '',
+const schema = object({
+  email: string().required('Email is required').email('Email is invalid'),
+  password: string().required('Password is required'),
 })
 
-const handleFormSubmit = async () => {
-  await login({
-    email: formData.value.email,
-    password: formData.value.password,
-  })
+const loading = ref(false)
+
+const handleFormSubmit = async (values: any, ctx: SubmissionContext) => {
+  loading.value = true
+
+  try {
+    await login({
+      email: values.email,
+      password: values.password,
+    })
+  } catch (error: any) {
+    const errorMessage = handleServerErrors(error, ctx)
+
+    if (errorMessage) {
+      useNotification().error({
+        title: 'Error',
+        message: errorMessage,
+      })
+    }
+  } finally {
+    loading.value = false
+  }
 }
 </script>
 
@@ -32,33 +53,36 @@ const handleFormSubmit = async () => {
       </p>
     </div>
     <div>
-      <form method="post" @submit.prevent="handleFormSubmit">
-        <div class="space-y-5">
-          <base-input
-            type="email"
-            name="email"
-            label="Email"
-            :required="true"
-            v-model="formData.email"
-            placeholder="info@email.com"
-          />
-          <base-password-input
-            label="Password"
-            placeholder="Enter your password"
-            v-model="formData.password"
-          />
-          <div class="flex items-center justify-between">
-            <nuxt-link
-              href="/reset-password"
-              class="ml-auto text-sm text-brand-500 hover:text-brand-600 dark:text-brand-400"
-              >Forgot password?
-            </nuxt-link>
-          </div>
-          <div>
-            <base-button variant="primary" class="w-full">Sign In</base-button>
-          </div>
+      <VeeForm
+        :validation-schema="schema"
+        @submit="handleFormSubmit"
+        class="space-y-5"
+      >
+        <base-input
+          type="email"
+          name="email"
+          label="Email"
+          :required="true"
+          placeholder="info@email.com"
+        />
+        <base-password-input
+          label="Password"
+          name="password"
+          placeholder="Enter your password"
+        />
+        <div class="flex items-center justify-between">
+          <nuxt-link
+            href="/reset-password"
+            class="ml-auto text-sm text-brand-500 hover:text-brand-600 dark:text-brand-400"
+            >Forgot password?
+          </nuxt-link>
         </div>
-      </form>
+        <div>
+          <base-button variant="primary" class="w-full" :disabled="loading"
+            >Sign In</base-button
+          >
+        </div>
+      </VeeForm>
       <div class="mt-5">
         <p
           class="text-sm font-normal text-center text-gray-700 dark:text-gray-400 sm:text-start"

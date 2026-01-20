@@ -20,11 +20,9 @@ const schema = object({
 })
 
 const loading = ref(false)
-const generalError = ref('')
 
 const handleRegister = async (values: any, ctx: SubmissionContext) => {
   loading.value = true
-  generalError.value = ''
 
   try {
     await register({
@@ -34,7 +32,6 @@ const handleRegister = async (values: any, ctx: SubmissionContext) => {
       password_confirmation: values.password_confirmation,
     })
   } catch (error: any) {
-    // Handle server validation errors
     const errorMessage = handleServerErrors(error, ctx)
 
     if (errorMessage) {
