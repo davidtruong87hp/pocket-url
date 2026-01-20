@@ -22,70 +22,40 @@ definePageMeta({
           <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
             <!-- First Name -->
             <div class="sm:col-span-1">
-              <label
-                class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400"
-              >
-                First Name<span class="text-error-500">*</span>
-              </label>
-              <input
-                type="text"
+              <base-input
+                label="First Name"
                 id="fname"
                 name="fname"
                 placeholder="Enter your first name"
-                class="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+                :required="true"
               />
             </div>
             <!-- Last Name -->
             <div class="sm:col-span-1">
-              <label
-                class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400"
-              >
-                Last Name<span class="text-error-500">*</span>
-              </label>
-              <input
-                type="text"
+              <base-input
+                label="Last Name"
                 id="lname"
                 name="lname"
                 placeholder="Enter your last name"
-                class="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+                :required="true"
               />
             </div>
           </div>
           <!-- Email -->
-          <div>
-            <label
-              class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400"
-            >
-              Email<span class="text-error-500">*</span>
-            </label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              placeholder="Enter your email"
-              class="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
-            />
-          </div>
+          <base-input
+            type="email"
+            label="Email"
+            id="email"
+            name="email"
+            placeholder="Enter your email"
+            :required="true"
+          />
+
           <!-- Password -->
-          <div>
-            <label
-              class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400"
-            >
-              Password<span class="text-error-500">*</span>
-            </label>
-            <div x-data="{ showPassword: false }" class="relative">
-              <input
-                type="password"
-                placeholder="Enter your password"
-                class="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent py-2.5 pl-4 pr-11 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
-              />
-              <span
-                class="absolute z-30 text-gray-500 -translate-y-1/2 cursor-pointer right-4 top-1/2 dark:text-gray-400"
-              >
-                <Icon name="lucide:eye" size="1rem" />
-              </span>
-            </div>
-          </div>
+          <base-password-input
+            label="Password"
+            placeholder="Enter your password"
+          />
 
           <!-- Button -->
           <div>
