@@ -1,4 +1,15 @@
 <script setup lang="ts">
+definePageMeta({
+  middleware: ['sanctum:auth'],
+})
+
+const store = useLinksStore()
+const { links } = storeToRefs(store)
+
+onMounted(() => {
+  store.fetchLinks()
+})
+
 const isEditLinkModal = ref(false)
 </script>
 
@@ -24,7 +35,7 @@ const isEditLinkModal = ref(false)
                 type="text"
                 placeholder="Search links..."
                 id="search-input"
-                class="dark:bg-dark-900 shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full rounded-lg border border-gray-200 bg-transparent py-2.5 pr-14 pl-12 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden xl:w-[430px] dark:border-gray-800 dark:bg-gray-900 dark:bg-white/[0.03] dark:text-white/90 dark:placeholder:text-white/30"
+                class="dark:bg-dark-900 shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full rounded-lg border border-gray-200 bg-transparent py-2.5 pr-14 pl-12 text-sm text-gray-800 placeholder:text-gray-400 focus:ring-3 focus:outline-hidden xl:w-[430px] dark:border-gray-800 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30"
               />
               <base-button
                 id="search-button"
@@ -54,7 +65,7 @@ const isEditLinkModal = ref(false)
     <div
       class="p-4 space-y-8 border-t border-gray-200 mt-7 dark:border-gray-800 sm:mt-0 xl:p-6"
     >
-      <links-table />
+      <links-table :links="links" />
     </div>
 
     <link-edit-modal v-if="isEditLinkModal" @close="isEditLinkModal = false" />

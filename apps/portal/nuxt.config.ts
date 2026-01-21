@@ -43,6 +43,7 @@ export default defineNuxtConfig({
     'nuxt-auth-sanctum',
     '@vee-validate/nuxt',
     'nuxt-toast',
+    '@pinia/nuxt',
   ],
 
   colorMode: {

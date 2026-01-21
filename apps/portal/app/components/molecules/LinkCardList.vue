@@ -1,14 +1,5 @@
 <script setup lang="ts">
-interface Link {
-  id: string
-  title: string
-  shortCode: string
-  shortDomain: string
-  originalUrl: string
-  createdAt: string
-  tags?: string[]
-  favicon?: string
-}
+import type { Link } from '~/types'
 
 interface Props {
   link: Link
@@ -24,7 +15,7 @@ const emit = defineEmits<{
   'view-details': []
 }>()
 
-const showMenu = ref(false)
+const showActionsMenu = ref(false)
 
 const formatDate = (date: string) => {
   return new Date(date).toLocaleDateString('en-US', {
@@ -103,23 +94,26 @@ const formatDate = (date: string) => {
                     <!-- Short URL -->
                     <div class="flex items-center gap-2">
                       <a
-                        :href="`https://bit.ly/${link.shortCode}`"
+                        :href="link.short_url"
                         target="_blank"
                         class="text-blue-600 dark:text-blue-400 font-medium text-sm hover:underline"
                       >
-                        pocket.url/{{ link.shortCode }}
+                        {{ link.short_url }}
                       </a>
                       <base-button variant="ghost" title="Copy to clipboard">
                         <Icon name="lucide:copy" size="1rem" />
                       </base-button>
+                    </div>
 
-                      <span class="text-gray-400 dark:text-gray-500">•</span>
+                    <!-- Original URL -->
+                    <div class="flex items-center gap-2">
+                      <Icon name="lucide:corner-down-right" size="1rem" />
                       <a
-                        :href="link.originalUrl"
+                        :href="link.original_url"
                         target="_blank"
-                        class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 truncate"
+                        class="text-gray-500 dark:text-gray-400 font-medium text-sm hover:underline"
                       >
-                        {{ link.originalUrl }}
+                        {{ link.original_url }}
                       </a>
                     </div>
                   </div>
@@ -140,14 +134,17 @@ const formatDate = (date: string) => {
                     <!-- Created Date -->
                     <div class="flex items-center gap-1.5">
                       <Icon name="lucide:calendar" size="1rem" />
-                      <span>{{ formatDate(link.createdAt) }}</span>
+                      <span>{{ formatDate(link.created_at) }}</span>
                     </div>
                   </div>
                 </div>
 
                 <!-- Actions Menu -->
                 <div class="relative">
-                  <base-button variant="ghost" @click="showMenu = !showMenu">
+                  <base-button
+                    variant="ghost"
+                    @click="showActionsMenu = !showActionsMenu"
+                  >
                     <Icon name="lucide:ellipsis-vertical" size="1.25rem" />
                   </base-button>
 
@@ -161,11 +158,11 @@ const formatDate = (date: string) => {
                     leave-to-class="transform opacity-0 scale-95"
                   >
                     <div
-                      v-if="showMenu"
+                      v-if="showActionsMenu"
                       class="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-1 z-10"
                     >
                       <nuxt-link
-                        :to="`/links/${link.shortDomain}/${link.shortCode}/details`"
+                        :to="`/links/${link.short_url}/details`"
                         class="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-3"
                       >
                         <Icon name="lucide:link" size="1rem" />
