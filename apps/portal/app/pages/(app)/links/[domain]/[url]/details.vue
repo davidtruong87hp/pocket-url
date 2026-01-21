@@ -1,12 +1,13 @@
 <script setup lang="ts">
-const link = {
-  id: '1',
-  title: 'Link Title 1',
-  shortCode: 'abc123',
-  shortDomain: 'pocket.url',
-  originalUrl: 'https://www.example.com',
-  createdAt: '2022-01-01',
-}
+const route = useRoute()
+const store = useLinksStore()
+
+const { domain, url } = route.params
+const { currentLink } = storeToRefs(store)
+
+onMounted(() => {
+  store.fetchLink(`${domain}/${url}`)
+})
 
 const isDeleteLinkModal = ref(false)
 const isEditLinkModal = ref(false)
@@ -17,7 +18,8 @@ const isEditLinkModal = ref(false)
     class="rounded-2xl border border-gray-200 bg-white px-5 py-7 dark:border-gray-800 dark:bg-white/3 xl:px-10 xl:py-12"
   >
     <link-card-details
-      :link="link"
+      v-if="currentLink"
+      :link="currentLink"
       @delete="isDeleteLinkModal = true"
       @edit="isEditLinkModal = true"
     />
@@ -26,8 +28,8 @@ const isEditLinkModal = ref(false)
       @close="isDeleteLinkModal = false"
     />
     <link-edit-modal
-      v-if="isEditLinkModal"
-      :link="link"
+      v-if="isEditLinkModal && currentLink"
+      :link="currentLink"
       @close="isEditLinkModal = false"
     />
   </div>

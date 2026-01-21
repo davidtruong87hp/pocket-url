@@ -100,9 +100,7 @@ const formatDate = (date: string) => {
                       >
                         {{ link.short_url }}
                       </a>
-                      <base-button variant="ghost" title="Copy to clipboard">
-                        <Icon name="lucide:copy" size="1rem" />
-                      </base-button>
+                      <copy-button :text="link.short_url" />
                     </div>
 
                     <!-- Original URL -->

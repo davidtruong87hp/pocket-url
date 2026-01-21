@@ -1,14 +1,5 @@
 <script setup lang="ts">
-interface Link {
-  id: string
-  title: string
-  shortCode: string
-  shortDomain: string
-  originalUrl: string
-  createdAt: string
-  tags?: string[]
-  favicon?: string
-}
+import type { Link } from '~/types'
 
 interface Props {
   link: Link
@@ -122,15 +113,13 @@ const formatDateTime = (date: string) => {
         </div>
         <div class="flex items-center gap-3">
           <a
-            :href="`https://${link.shortDomain}/${link.shortCode}`"
+            :href="`https://${link.short_url}`"
             target="_blank"
             class="text-lg font-medium text-blue-600 dark:text-blue-400 hover:underline"
           >
-            {{ link.shortDomain }}/{{ link.shortCode }}
+            {{ link.short_url }}
           </a>
-          <base-button variant="ghost" title="Copy to clipboard">
-            <Icon name="lucide:copy" size="1.25rem" />
-          </base-button>
+          <copy-button :text="link.short_url" size="lg" />
         </div>
       </div>
 
@@ -143,11 +132,11 @@ const formatDateTime = (date: string) => {
           Original link
         </label>
         <a
-          :href="link.originalUrl"
+          :href="link.original_url"
           target="_blank"
           class="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 break-all"
         >
-          {{ link.originalUrl }}
+          {{ link.original_url }}
         </a>
       </div>
 
@@ -163,7 +152,7 @@ const formatDateTime = (date: string) => {
             </span>
           </div>
           <span class="text-gray-900 dark:text-white font-medium">
-            {{ formatDateTime(link.createdAt) }}
+            {{ formatDateTime(link.created_at) }}
           </span>
         </div>
       </div>

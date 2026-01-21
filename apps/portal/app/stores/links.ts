@@ -4,6 +4,7 @@ import { linksApi } from '~/services/api/links'
 
 export const useLinksStore = defineStore('links', () => {
   const links = ref<Link[]>([])
+  const currentLink = ref<Link | null>(null)
   const loading = ref(false)
   const error = ref<string | null>(null)
 
@@ -33,14 +34,30 @@ export const useLinksStore = defineStore('links', () => {
     }
   }
 
+  const fetchLink = async (shortUrl: string) => {
+    loading.value = true
+    error.value = null
+
+    try {
+      currentLink.value = await linksApi.getLink(shortUrl)
+    } catch (error: any) {
+      error.value = error.message || 'Failed to fetch link'
+      console.error('Error fetching link: ', error)
+    } finally {
+      loading.value = false
+    }
+  }
+
   return {
     // State
     links,
+    currentLink,
     loading,
     error,
     pagination,
 
     // Actions
     fetchLinks,
+    fetchLink,
   }
 })

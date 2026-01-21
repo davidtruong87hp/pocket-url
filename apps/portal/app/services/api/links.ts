@@ -1,4 +1,4 @@
-import type { LinkFilters, PaginatedLinksResponse } from '~/types'
+import type { Link, LinkFilters, PaginatedLinksResponse } from '~/types'
 
 export const linksApi = {
   async getLinks(filters?: LinkFilters): Promise<PaginatedLinksResponse> {
@@ -20,5 +20,13 @@ export const linksApi = {
     }
 
     return { data: links, meta: pagination }
+  },
+
+  async getLink(shortUrl: string): Promise<Link | null> {
+    const { data } = await useSanctumFetch<{ data: Link }>(
+      `/api/links/${shortUrl}`
+    )
+
+    return data.value?.data || null
   },
 }
