@@ -1,22 +1,57 @@
 <script setup lang="ts">
-interface Link {
-  id: string
-  title: string
-  shortCode: string
-  shortDomain: string
-  originalUrl: string
-  createdAt: string
-  tags?: string[]
-  favicon?: string
-}
+import { object, string } from 'yup'
+import type { Link } from '~/types'
+import type { SubmissionContext } from 'vee-validate'
+import { useLinksStore } from '~/stores/links'
 
 interface Props {
   link?: Link
 }
 
-defineProps<Props>()
+const props = defineProps<Props>()
 
-defineEmits(['close'])
+const emit = defineEmits(['close'])
+
+const { loading, createLink, updateLink } = useLinksStore()
+const { handleServerErrors } = useFormServerErrors()
+
+const isEdit = computed(() => !!props.link)
+
+const schema = object().shape({
+  original_url: string().required('Original URL is required'),
+  title: string().max(255, 'Title is too long (255 characters max)').optional(),
+})
+
+const onSubmit = async (values: any, ctx: SubmissionContext) => {
+  try {
+    const payload = {
+      url: values.original_url,
+      title: values.title,
+    }
+
+    if (props.link === undefined) {
+      await createLink(payload)
+    } else {
+      await updateLink(props.link.short_url, payload)
+    }
+
+    useNotification().success({
+      title: 'Success',
+      message: `Link ${isEdit.value ? 'updated' : 'created'} successfully`,
+    })
+
+    emit('close')
+  } catch (error: any) {
+    const errorMessage = handleServerErrors(error, ctx)
+
+    if (errorMessage) {
+      useNotification().error({
+        title: 'Error',
+        message: errorMessage,
+      })
+    }
+  }
+}
 </script>
 
 <template>
@@ -47,20 +82,27 @@ defineEmits(['close'])
           <Icon name="lucide:x" size="1.25rem" />
         </base-button>
 
-        <form class="flex flex-col">
+        <VeeForm
+          :validation-schema="schema"
+          :key="props.link?.id || 'new'"
+          @submit="onSubmit"
+          class="flex flex-col"
+        >
           <div class="overflow-y-auto px-2">
             <div class="grid grid-cols-1 gap-x-6 gap-y-5 sm:grid-cols-2">
               <div class="sm:col-span-2">
                 <base-input
+                  name="original_url"
                   label="Destination URL"
-                  :model-value="link?.originalUrl"
                   :required="true"
+                  :model-value="link?.original_url"
                   placeholder="https://example.com/my-long-url"
                 />
               </div>
 
               <div class="sm:col-span-2">
                 <base-input
+                  name="title"
                   label="Title (optional)"
                   :model-value="link?.title"
                 />
@@ -69,11 +111,15 @@ defineEmits(['close'])
           </div>
           <div class="flex gap-6 px-2 mt-6 justify-end">
             <div class="flex items-center w-full gap-3 sm:w-auto">
-              <base-button @click="$emit('close')"> Cancel </base-button>
-              <base-button variant="primary"> Save </base-button>
+              <base-button @click="$emit('close')" :disabled="loading">
+                Cancel
+              </base-button>
+              <base-button variant="primary" :loading="loading">
+                {{ loading ? 'Saving...' : 'Save' }}
+              </base-button>
             </div>
           </div>
-        </form>
+        </VeeForm>
       </div>
     </template>
   </modal>

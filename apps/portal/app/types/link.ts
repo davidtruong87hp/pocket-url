@@ -11,17 +11,17 @@ export interface Link {
 
 export interface CreateLinkDTO {
   title?: string
-  originalUrl: string
+  url: string
 }
 
 export interface UpdateLinkDTO {
   title?: string
-  originalUrl?: string
+  url?: string
 }
 
 export interface LinkFilters {
   page?: number
-  perPage?: number
+  limit?: number
 }
 
 export interface PaginatedLinksResponse {
@@ -34,4 +34,10 @@ export interface PaginatedLinksResponse {
     from: number
     to: number
   }
+}
+
+export interface UpdateLinkResponse {
+  data?: Link
+  message?: string
+  changed_fields?: string[]
 }

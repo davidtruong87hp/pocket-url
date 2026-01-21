@@ -24,7 +24,8 @@ const isEditLinkModal = ref(false)
       @edit="isEditLinkModal = true"
     />
     <link-delete-modal
-      v-if="isDeleteLinkModal"
+      v-if="isDeleteLinkModal && currentLink"
+      :link="currentLink"
       @close="isDeleteLinkModal = false"
     />
     <link-edit-modal

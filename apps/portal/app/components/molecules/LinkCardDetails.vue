@@ -113,7 +113,7 @@ const formatDateTime = (date: string) => {
         </div>
         <div class="flex items-center gap-3">
           <a
-            :href="`https://${link.short_url}`"
+            :href="`${link.short_url}`"
             target="_blank"
             class="text-lg font-medium text-blue-600 dark:text-blue-400 hover:underline"
           >

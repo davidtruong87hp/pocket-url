@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { Link } from '~/types'
+
 definePageMeta({
   middleware: ['sanctum:auth'],
 })
@@ -10,7 +12,18 @@ onMounted(() => {
   store.fetchLinks()
 })
 
-const isEditLinkModal = ref(false)
+const isCreateLinkModal = ref(false)
+const isDeleteLinkModal = ref(false)
+const deletingLink = ref<Link | null>(null)
+
+const deleteLinkHandler = (linkId: number) => {
+  deletingLink.value = links.value.find((link) => link.id === linkId) || null
+  isDeleteLinkModal.value = true
+}
+
+const changePageHandler = (page: number) => {
+  store.fetchLinks({ page })
+}
 </script>
 
 <template>
@@ -55,7 +68,7 @@ const isEditLinkModal = ref(false)
             Filter &amp; Sort
           </base-button>
 
-          <base-button variant="primary" @click="isEditLinkModal = true">
+          <base-button variant="primary" @click="isCreateLinkModal = true">
             Create Link
             <Icon name="lucide:plus" size="1rem" />
           </base-button>
@@ -65,9 +78,21 @@ const isEditLinkModal = ref(false)
     <div
       class="p-4 space-y-8 border-t border-gray-200 mt-7 dark:border-gray-800 sm:mt-0 xl:p-6"
     >
-      <links-table :links="links" />
+      <links-table
+        :links="links"
+        :onDeleteLink="deleteLinkHandler"
+        :onChangePage="changePageHandler"
+      />
     </div>
 
-    <link-edit-modal v-if="isEditLinkModal" @close="isEditLinkModal = false" />
+    <link-edit-modal
+      v-if="isCreateLinkModal"
+      @close="isCreateLinkModal = false"
+    />
+    <link-delete-modal
+      v-if="isDeleteLinkModal && deletingLink"
+      :link="deletingLink"
+      @close="isDeleteLinkModal = false"
+    />
   </div>
 </template>

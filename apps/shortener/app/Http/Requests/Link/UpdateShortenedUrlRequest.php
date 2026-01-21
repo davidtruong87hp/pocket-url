@@ -23,7 +23,7 @@ class UpdateShortenedUrlRequest extends FormRequest
     {
         return [
             'url' => 'sometimes|url|max:2048',
-            'title' => 'sometimes|string|max:255',
+            'title' => 'sometimes|nullable|string|max:255',
         ];
     }
 }

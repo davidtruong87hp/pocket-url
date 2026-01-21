@@ -1,4 +1,11 @@
-import type { Link, LinkFilters, PaginatedLinksResponse } from '~/types'
+import type {
+  CreateLinkDTO,
+  Link,
+  LinkFilters,
+  PaginatedLinksResponse,
+  UpdateLinkDTO,
+  UpdateLinkResponse,
+} from '~/types'
 
 export const linksApi = {
   async getLinks(filters?: LinkFilters): Promise<PaginatedLinksResponse> {
@@ -28,5 +35,48 @@ export const linksApi = {
     )
 
     return data.value?.data || null
+  },
+
+  async createLink(payload: CreateLinkDTO): Promise<Link | undefined> {
+    const { data, error } = await useSanctumFetch<{ data: Link }>(
+      '/api/links',
+      {
+        method: 'POST',
+        body: payload,
+      }
+    )
+
+    if (error.value) throw error.value
+
+    return data.value?.data
+  },
+
+  async updateLink(
+    shortUrl: string,
+    payload: UpdateLinkDTO
+  ): Promise<UpdateLinkResponse> {
+    const { data, error } = await useSanctumFetch<UpdateLinkResponse>(
+      `/api/links/${shortUrl}`,
+      {
+        method: 'PUT',
+        body: payload,
+      }
+    )
+
+    if (error.value) throw error.value
+
+    return {
+      data: data.value?.data,
+      message: data.value?.message,
+      changed_fields: data.value?.changed_fields,
+    }
+  },
+
+  async deleteLink(shortUrl: string): Promise<void> {
+    const { error } = await useSanctumFetch(`/api/links/${shortUrl}`, {
+      method: 'DELETE',
+    })
+
+    if (error.value) throw error.value
   },
 }

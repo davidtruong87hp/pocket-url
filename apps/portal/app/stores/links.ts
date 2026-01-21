@@ -1,5 +1,11 @@
 import { defineStore } from 'pinia'
-import type { Link, LinkFilters } from '~/types'
+import type {
+  CreateLinkDTO,
+  Link,
+  LinkFilters,
+  UpdateLinkDTO,
+  UpdateLinkResponse,
+} from '~/types'
 import { linksApi } from '~/services/api/links'
 
 export const useLinksStore = defineStore('links', () => {
@@ -48,6 +54,100 @@ export const useLinksStore = defineStore('links', () => {
     }
   }
 
+  const createLink = async (
+    payload: CreateLinkDTO
+  ): Promise<Link | undefined> => {
+    loading.value = true
+    error.value = null
+
+    try {
+      const createdLink = await linksApi.createLink(payload)
+
+      // Add to the local list
+      if (createdLink) {
+        links.value.unshift(createdLink)
+        pagination.value.total += 1
+      }
+
+      return createdLink
+    } catch (error: any) {
+      error.value = error.message || 'Failed to create link'
+
+      throw error
+    } finally {
+      loading.value = false
+    }
+  }
+
+  const updateLink = async (
+    shortUrl: string,
+    payload: UpdateLinkDTO
+  ): Promise<UpdateLinkResponse | undefined> => {
+    loading.value = true
+    error.value = null
+
+    try {
+      const response = await linksApi.updateLink(shortUrl, payload)
+      const updatedLink = response.data
+
+      // Update in local list
+      if (updatedLink) {
+        const index = links.value.findIndex(
+          (link) => link.id === updatedLink.id
+        )
+        if (index !== -1) {
+          links.value[index] = updatedLink
+        }
+
+        // Update current link if it's the same
+        if (currentLink.value?.id === updatedLink.id) {
+          currentLink.value = updatedLink
+        }
+      }
+
+      return response
+    } catch (error: any) {
+      error.value = error.message || 'Failed to update link'
+
+      throw error
+    } finally {
+      loading.value = false
+    }
+  }
+
+  const deleteLink = async (shortUrl: string): Promise<boolean> => {
+    loading.value = true
+    error.value = null
+
+    try {
+      await linksApi.deleteLink(shortUrl)
+
+      // Remove from the local list
+      links.value = links.value.filter((link) => link.short_url !== shortUrl)
+      pagination.value.total -= 1
+
+      // Clear current link if it's the same
+      if (currentLink.value?.short_url === shortUrl) {
+        currentLink.value = null
+      }
+
+      return true
+    } catch (error: any) {
+      error.value = error.message || 'Failed to delete link'
+      console.error('Error deleting link: ', error)
+
+      return false
+    } finally {
+      loading.value = false
+    }
+  }
+
+  const refresh = async () => {
+    if (links.value.length > 0) {
+      fetchLinks()
+    }
+  }
+
   return {
     // State
     links,
@@ -59,5 +159,9 @@ export const useLinksStore = defineStore('links', () => {
     // Actions
     fetchLinks,
     fetchLink,
+    createLink,
+    updateLink,
+    deleteLink,
+    refresh,
   }
 })
