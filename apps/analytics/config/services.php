@@ -35,4 +35,7 @@ return [
         ],
     ],
 
+    'analytics' => [
+        'api_key' => env('ANALYTICS_API_KEY'),
+    ],
 ];

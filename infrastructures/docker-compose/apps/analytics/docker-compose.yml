@@ -8,6 +8,7 @@ services:
       target: development
     environment:
       - OCTANE_SERVER=swoole
+      - ANALYTICS_API_KEY=${ANALYTICS_API_KEY}
     ports:
       - '${ANALYTICS_API_PORT:-8001}:8001'
     volumes:
@@ -33,6 +34,7 @@ services:
       target: development
     environment:
       - OCTANE_SERVER=swoole
+      - ANALYTICS_API_KEY=${ANALYTICS_API_KEY}
     volumes:
       - ../../../../apps/analytics:/app
       - worker-logs:/var/log/supervisor
