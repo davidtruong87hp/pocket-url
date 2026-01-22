@@ -32,6 +32,7 @@ class LinkClickRepository
             'os_version' => $data->osVersion,
             'browser_name' => $data->browser,
             'browser_version' => $data->browserVersion,
+            'user_id' => $data->userId,
         ]);
     }
 }

@@ -48,6 +48,8 @@ export class ShortenerClient implements OnModuleInit {
           shortUrl: result.metadata.shortUrl,
           title: result.metadata.title,
           createdAt: result.metadata.createdAt,
+          shortDomain: result.metadata.shortDomain,
+          ownerId: result.metadata.ownerId,
         },
       };
 

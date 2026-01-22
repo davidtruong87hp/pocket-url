@@ -38,6 +38,8 @@ class ShortenerServiceHandler implements ShortenerServiceInterface
             'short_url' => "http://{$shortDomain}/{$shortenedUrl->shortcode}",
             'title' => $shortenedUrl->title ?? '',
             'created_at' => $shortenedUrl->created_at->toAtomString(),
+            'owner_id' => (string) $shortenedUrl->user_id,
+            'short_domain' => $shortDomain,
         ]));
 
         return $response;

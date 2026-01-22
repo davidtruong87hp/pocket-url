@@ -9,6 +9,8 @@ export interface ResolveShortcodeResponse {
     shortUrl: string;
     title: string;
     createdAt: string;
+    ownerId?: string;
+    shortDomain?: string;
   };
 }
 

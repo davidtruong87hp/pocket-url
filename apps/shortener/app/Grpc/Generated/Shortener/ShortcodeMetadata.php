@@ -29,6 +29,14 @@ class ShortcodeMetadata extends \Google\Protobuf\Internal\Message
      * Generated from protobuf field <code>string created_at = 4;</code>
      */
     protected $created_at = '';
+    /**
+     * Generated from protobuf field <code>string owner_id = 5;</code>
+     */
+    protected $owner_id = '';
+    /**
+     * Generated from protobuf field <code>string short_domain = 6;</code>
+     */
+    protected $short_domain = '';
 
     /**
      * Constructor.
@@ -40,6 +48,8 @@ class ShortcodeMetadata extends \Google\Protobuf\Internal\Message
      *     @type string $short_url
      *     @type string $title
      *     @type string $created_at
+     *     @type string $owner_id
+     *     @type string $short_domain
      * }
      */
     public function __construct($data = NULL) {
@@ -131,6 +141,50 @@ class ShortcodeMetadata extends \Google\Protobuf\Internal\Message
     {
         GPBUtil::checkString($var, True);
         $this->created_at = $var;
+
+        return $this;
+    }
+
+    /**
+     * Generated from protobuf field <code>string owner_id = 5;</code>
+     * @return string
+     */
+    public function getOwnerId()
+    {
+        return $this->owner_id;
+    }
+
+    /**
+     * Generated from protobuf field <code>string owner_id = 5;</code>
+     * @param string $var
+     * @return $this
+     */
+    public function setOwnerId($var)
+    {
+        GPBUtil::checkString($var, True);
+        $this->owner_id = $var;
+
+        return $this;
+    }
+
+    /**
+     * Generated from protobuf field <code>string short_domain = 6;</code>
+     * @return string
+     */
+    public function getShortDomain()
+    {
+        return $this->short_domain;
+    }
+
+    /**
+     * Generated from protobuf field <code>string short_domain = 6;</code>
+     * @param string $var
+     * @return $this
+     */
+    public function setShortDomain($var)
+    {
+        GPBUtil::checkString($var, True);
+        $this->short_domain = $var;
 
         return $this;
     }

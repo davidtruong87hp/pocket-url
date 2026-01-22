@@ -16,7 +16,7 @@ class Shortener
         }
         $pool->internalAddGeneratedFile(
             '
-é
+’
 $apps/shortener/proto/shortener.proto	shortener"<
 ResolveShortcodeRequest
 	shortcode (	
@@ -25,14 +25,16 @@ $apps/shortener/proto/shortener.proto	shortener"<
 destination_url (	
 success (
 error (	.
-metadata (2.shortener.ShortcodeMetadata"]
+metadata (2.shortener.ShortcodeMetadata"…
 ShortcodeMetadata
 
 short_code (	
 	short_url (	
 title (	
 
-created_at (	2o
+created_at (	
+owner_id (	
+short_domain (	2o
 ShortenerService[
 ResolveShortcode".shortener.ResolveShortcodeRequest#.shortener.ResolveShortcodeResponseBÊ	ShortenerâGPBMetadatabproto3'
         , true);

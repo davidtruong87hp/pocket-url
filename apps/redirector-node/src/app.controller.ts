@@ -18,6 +18,10 @@ export class AppController {
     @Req() req: Request,
     @Res() res: Response,
   ) {
+    if (!shortcode || !/^[a-zA-Z0-9]{6}$/.test(shortcode)) {
+      throw new ShortcodeNotFoundException(shortcode);
+    }
+
     const result = await this.shortenerClient.resolve(shortcode);
 
     if (!result) {
@@ -31,6 +35,7 @@ export class AppController {
         userAgent: req.headers['user-agent'],
         referer: req.headers.referer,
         ip: req.ip || req.socket.remoteAddress,
+        ownerId: result.metadata.ownerId,
       })
       .catch((err) => {
         console.log('Failed to publish click event', err);

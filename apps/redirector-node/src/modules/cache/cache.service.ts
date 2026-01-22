@@ -9,6 +9,8 @@ export interface CachedShortCode {
     shortUrl: string;
     title: string;
     createdAt: string;
+    shortDomain?: string;
+    ownerId?: string;
   };
 }
 

@@ -27,4 +27,6 @@ message ShortcodeMetadata {
     string short_url = 2;
     string title = 3;
     string created_at = 4;
+    string owner_id = 5;
+    string short_domain = 6;
 }

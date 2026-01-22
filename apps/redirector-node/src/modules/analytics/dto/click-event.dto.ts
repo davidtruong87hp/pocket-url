@@ -4,4 +4,5 @@ export class ClickEventDto {
   userAgent?: string;
   referer?: string;
   ip?: string;
+  ownerId?: string;
 }
