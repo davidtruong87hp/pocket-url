@@ -29,7 +29,8 @@ class CreateLinkClickDto
         public ?string $osName,
         public ?string $osVersion,
         public ?string $browser,
-        public ?string $browserVersion
+        public ?string $browserVersion,
+        public int $userId
     ) {}
 
     /**
@@ -59,7 +60,8 @@ class CreateLinkClickDto
             osName: $data['os_name'] ?? null,
             osVersion: $data['os_version'] ?? null,
             browser: $data['browser_name'] ?? null,
-            browserVersion: $data['browser_version'] ?? null
+            browserVersion: $data['browser_version'] ?? null,
+            userId: $data['user_id'] ?? 0,
         );
     }
 }

@@ -75,6 +75,8 @@ class ProcessClickEvent implements ShouldQueue
                 'region' => $geoData['region'] ?? null,
                 'latitude' => $geoData['latitude'] ?? null,
                 'longitude' => $geoData['longitude'] ?? null,
+
+                'user_id' => $this->clickData['user_id'] ?? 0,
             ]);
 
             $linkClickService->create($createLinkClickDto);

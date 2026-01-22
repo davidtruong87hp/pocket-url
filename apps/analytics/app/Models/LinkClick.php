@@ -37,6 +37,7 @@ class LinkClick extends Model
         'utm_campaign',
         'utm_term',
         'utm_content',
+        'user_id',
     ];
 
     protected $casts = [
