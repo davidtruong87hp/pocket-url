@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Link;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Link\ShortenedUrlResource;
 use App\Models\ShortenedUrl;
+use App\Services\External\AnalyticsService;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class ViewShortenedUrlController extends Controller
@@ -15,6 +16,10 @@ class ViewShortenedUrlController extends Controller
     {
         $this->authorize('manage', $shortenedUrl);
 
-        return new ShortenedUrlResource($shortenedUrl);
+        $stats = app(AnalyticsService::class)->getLinkAnalytics($shortenedUrl->shortcode);
+
+        return (new ShortenedUrlResource($shortenedUrl))->additional([
+            'stats' => $stats,
+        ]);
     }
 }

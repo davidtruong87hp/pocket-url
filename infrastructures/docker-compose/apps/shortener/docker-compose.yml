@@ -11,6 +11,8 @@ services:
       - XDEBUG_MODE=debug
       - XDEBUG_CLIENT_HOST=host.docker.internal
       - XDEBUG_CLIENT_PORT=9003
+      - ANALYTICS_API_KEY=${ANALYTICS_API_KEY}
+      - ANALYTICS_API_ENDPOINT=${ANALYTICS_API_ENDPOINT}
     extra_hosts:
       - "host.docker.internal:host-gateway" # For Linux
     ports:
@@ -50,6 +52,8 @@ services:
       - DB_HOST=mysql
       - REDIS_HOST=redis
       - QUEUE_CONNECTION=redis
+      - ANALYTICS_API_KEY=${ANALYTICS_API_KEY}
+      - ANALYTICS_API_ENDPOINT=${ANALYTICS_API_ENDPOINT}
     volumes:
       - ../../../../apps/shortener:/app
       - worker-logs:/var/log/supervisor
