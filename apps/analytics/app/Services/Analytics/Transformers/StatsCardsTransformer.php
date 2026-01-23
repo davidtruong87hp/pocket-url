@@ -16,7 +16,7 @@ class StatsCardsTransformer
         $topDate = $stats->sortByDesc('total_clicks')->first();
 
         $countries = $this->aggregateJsonColumn($stats, 'top_countries');
-        $referrers = $this->aggregateJsonColumn($stats, 'top_referrers');
+        $referrers = $this->aggregateJsonColumn($stats, 'top_referrers', 'domain');
 
         return [
             [

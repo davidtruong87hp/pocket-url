@@ -12,7 +12,7 @@ class LocationBreakdownTransformer
     public function transform(Collection $stats): array
     {
         $countries = $this->aggregateJsonColumn($stats, 'top_countries');
-        $cities = $this->aggregateJsonColumn($stats, 'top_cities');
+        $cities = $this->aggregateJsonColumn($stats, 'top_cities', 'city');
 
         $totalCountries = collect($countries)->sum('value');
         $totalCities = collect($cities)->sum('value');

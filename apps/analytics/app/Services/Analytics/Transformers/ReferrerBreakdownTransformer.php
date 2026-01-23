@@ -11,6 +11,6 @@ class ReferrerBreakdownTransformer
 
     public function transform(Collection $stats): array
     {
-        return $this->aggregateJsonColumn($stats, 'top_referrers');
+        return $this->aggregateJsonColumn($stats, 'top_referrers', 'domain');
     }
 }

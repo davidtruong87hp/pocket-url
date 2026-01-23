@@ -11,7 +11,7 @@ class DeviceBreakdownTransformer
 
     public function transform(Collection $stats): array
     {
-        $devices = $this->aggregateJsonColumn($stats, 'top_devices');
+        $devices = $this->aggregateJsonColumn($stats, 'top_devices', 'type');
         $total = collect($devices)->sum('value');
 
         return collect($devices)->map(function ($item) use ($total) {

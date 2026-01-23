@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Collection;
 
 trait AggregatesJsonColumns
 {
-    public function aggregateJsonColumn(Collection $stats, string $column): array
+    public function aggregateJsonColumn(Collection $stats, string $column, string $labelField = 'name', string $valueField = 'count'): array
     {
         $aggregated = [];
 
@@ -15,8 +15,8 @@ trait AggregatesJsonColumns
 
             if (is_array($data)) {
                 foreach ($data as $item) {
-                    $key = $item['label'] ?? $item['name'] ?? 'Unknown';
-                    $value = $item['count'] ?? $item['value'] ?? 0;
+                    $key = $item[$labelField] ?? 'Unknown';
+                    $value = $item[$valueField] ?? 0;
 
                     if (! isset($aggregated[$key])) {
                         $aggregated[$key] = 0;
