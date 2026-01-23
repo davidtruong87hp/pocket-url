@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\DTOs\SaveClickStatisticDto;
+use App\Services\AnalyticsService;
 use App\Services\ClickStatisticService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Carbon;
@@ -56,7 +57,11 @@ class AggregateClickStatistics extends Command
         }
 
         $bar->finish();
-        $this->newLine();
+        $this->newLine(2);
+
+        // Invalidate cache after aggregation
+        $this->info('Invalidating analytics cache...');
+        app(AnalyticsService::class)->invalidateAllCache();
 
         $this->info('🎉 All aggregations complete!');
 
