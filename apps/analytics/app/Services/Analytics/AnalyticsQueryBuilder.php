@@ -4,6 +4,8 @@ namespace App\Services\Analytics;
 
 use App\Models\ClickStatistic;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Query\Builder;
+use Illuminate\Support\Facades\DB;
 
 class AnalyticsQueryBuilder
 {
@@ -23,7 +25,13 @@ class AnalyticsQueryBuilder
 
     public function forUserId(int $userId): self
     {
-        $this->query->where('user_id', $userId);
+        $this->query
+            ->whereExists(function (Builder $query) use ($userId) {
+                $query->select(DB::raw(1))
+                    ->from('link_clicks')
+                    ->whereColumn('click_statistics.shortcode', '=', 'link_clicks.shortcode')
+                    ->where('link_clicks.id', '=', $userId);
+            });
 
         return $this;
     }
@@ -35,8 +43,8 @@ class AnalyticsQueryBuilder
         return $this;
     }
 
-    public function get(): Collection
+    public function get($columns = ['*']): Collection
     {
-        return $this->query->get();
+        return $this->query->select($columns)->get();
     }
 }

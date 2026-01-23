@@ -3,10 +3,11 @@
 namespace Tests\Feature\Api;
 
 use App\Models\ClickStatistic;
+use App\Models\LinkClick;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class GetLinkAnalyticsTest extends TestCase
+class GetUserAnalyticsTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -16,10 +17,14 @@ class GetLinkAnalyticsTest extends TestCase
         config(['services.analytics.api_key' => 'test-api-key']);
     }
 
-    public function test_it_returns_analytics_for_specific_link(): void
+    public function test_it_returns_analytics_for_specific_user(): void
     {
+        $linkClick = LinkClick::factory()->create([
+            'user_id' => 1,
+        ]);
+
         ClickStatistic::factory()->create([
-            'shortcode' => 'abc123',
+            'shortcode' => $linkClick->shortcode,
             'date' => '2026-01-20',
             'total_clicks' => 100,
         ]);
@@ -31,7 +36,7 @@ class GetLinkAnalyticsTest extends TestCase
         ]);
 
         $response = $this->withHeader('X-API-KEY', 'test-api-key')
-            ->getJson('/api/links/abc123/analytics?startDate=2026-01-20&endDate=2026-01-20');
+            ->getJson('/api/users/1/analytics?startDate=2026-01-20&endDate=2026-01-20');
 
         $response->assertStatus(200);
 
@@ -43,7 +48,7 @@ class GetLinkAnalyticsTest extends TestCase
     public function test_it_only_accepts_custom_date_range_within_90_days()
     {
         $response = $this->withHeader('X-API-KEY', 'test-api-key')
-            ->getJson('/api/links/abc123/analytics?startDate=2025-01-20&endDate=2026-01-20');
+            ->getJson('/api/users/1/analytics?startDate=2025-01-20&endDate=2026-01-20');
 
         $response->assertStatus(422);
 

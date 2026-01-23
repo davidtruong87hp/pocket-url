@@ -37,6 +37,27 @@ class AnalyticsService
         );
     }
 
+    public function getUserAnalytics(int $userId, array $params): array
+    {
+        $dateRange = $this->dateParser->parse($params);
+        $cacheKey = $this->cacheManager->generateKey("user:{$userId}", $dateRange, $params);
+        $ttl = $this->cacheManager->calculateTTL($dateRange['end']);
+
+        return $this->cacheManager->remember(
+            $cacheKey,
+            $ttl,
+            ['analytics', "user:{$userId}"],
+            function () use ($userId, $dateRange) {
+                $stats = $this->queryBuilder
+                    ->forUserId($userId)
+                    ->forDateRange($dateRange['start'], $dateRange['end'])
+                    ->get();
+
+                return $this->responseBuilder->build($stats, $dateRange);
+            }
+        );
+    }
+
     public function invalidateCache(?string $shortcode = null, ?int $userId = null)
     {
         $tags = ['analytics'];
