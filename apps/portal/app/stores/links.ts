@@ -3,6 +3,7 @@ import type {
   CreateLinkDTO,
   Link,
   LinkFilters,
+  LinkStats,
   UpdateLinkDTO,
   UpdateLinkResponse,
 } from '~/types'
@@ -11,6 +12,7 @@ import { linksApi } from '~/services/api/links'
 export const useLinksStore = defineStore('links', () => {
   const links = ref<Link[]>([])
   const currentLink = ref<Link | null>(null)
+  const currentLinkStats = ref<LinkStats | null>(null)
   const loading = ref(false)
   const error = ref<string | null>(null)
 
@@ -45,7 +47,9 @@ export const useLinksStore = defineStore('links', () => {
     error.value = null
 
     try {
-      currentLink.value = await linksApi.getLink(shortUrl)
+      const response = await linksApi.getLink(shortUrl)
+      currentLink.value = response?.link || null
+      currentLinkStats.value = response?.stats || null
     } catch (error: any) {
       error.value = error.message || 'Failed to fetch link'
       console.error('Error fetching link: ', error)
@@ -55,7 +59,7 @@ export const useLinksStore = defineStore('links', () => {
   }
 
   const createLink = async (
-    payload: CreateLinkDTO
+    payload: CreateLinkDTO,
   ): Promise<Link | undefined> => {
     loading.value = true
     error.value = null
@@ -81,7 +85,7 @@ export const useLinksStore = defineStore('links', () => {
 
   const updateLink = async (
     shortUrl: string,
-    payload: UpdateLinkDTO
+    payload: UpdateLinkDTO,
   ): Promise<UpdateLinkResponse | undefined> => {
     loading.value = true
     error.value = null
@@ -93,7 +97,7 @@ export const useLinksStore = defineStore('links', () => {
       // Update in local list
       if (updatedLink) {
         const index = links.value.findIndex(
-          (link) => link.id === updatedLink.id
+          (link) => link.id === updatedLink.id,
         )
         if (index !== -1) {
           links.value[index] = updatedLink
@@ -129,6 +133,7 @@ export const useLinksStore = defineStore('links', () => {
       // Clear current link if it's the same
       if (currentLink.value?.short_url === shortUrl) {
         currentLink.value = null
+        currentLinkStats.value = null
       }
 
       return true
@@ -152,6 +157,7 @@ export const useLinksStore = defineStore('links', () => {
     // State
     links,
     currentLink,
+    currentLinkStats,
     loading,
     error,
     pagination,

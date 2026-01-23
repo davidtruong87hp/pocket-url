@@ -2,6 +2,7 @@ import type {
   CreateLinkDTO,
   Link,
   LinkFilters,
+  LinkStats,
   PaginatedLinksResponse,
   UpdateLinkDTO,
   UpdateLinkResponse,
@@ -13,7 +14,7 @@ export const linksApi = {
       '/api/links',
       {
         query: filters,
-      }
+      },
     )
 
     const links = data.value?.data || []
@@ -29,12 +30,21 @@ export const linksApi = {
     return { data: links, meta: pagination }
   },
 
-  async getLink(shortUrl: string): Promise<Link | null> {
-    const { data } = await useSanctumFetch<{ data: Link }>(
-      `/api/links/${shortUrl}`
+  async getLink(
+    shortUrl: string,
+  ): Promise<{ link: Link; stats: LinkStats } | null> {
+    const { data } = await useSanctumFetch<{ data: Link; stats: LinkStats }>(
+      `/api/links/${shortUrl}`,
     )
 
-    return data.value?.data || null
+    if (!data.value) {
+      return null
+    }
+
+    return {
+      link: data.value.data,
+      stats: data.value.stats,
+    }
   },
 
   async createLink(payload: CreateLinkDTO): Promise<Link | undefined> {
@@ -43,7 +53,7 @@ export const linksApi = {
       {
         method: 'POST',
         body: payload,
-      }
+      },
     )
 
     if (error.value) throw error.value
@@ -53,14 +63,14 @@ export const linksApi = {
 
   async updateLink(
     shortUrl: string,
-    payload: UpdateLinkDTO
+    payload: UpdateLinkDTO,
   ): Promise<UpdateLinkResponse> {
     const { data, error } = await useSanctumFetch<UpdateLinkResponse>(
       `/api/links/${shortUrl}`,
       {
         method: 'PUT',
         body: payload,
-      }
+      },
     )
 
     if (error.value) throw error.value

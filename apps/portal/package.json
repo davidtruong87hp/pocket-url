@@ -17,6 +17,7 @@
     "@pinia/nuxt": "0.11.3",
     "@tailwindcss/vite": "^4.1.18",
     "@vee-validate/nuxt": "^4.15.1",
+    "apexcharts": "^5.3.6",
     "izitoast": "^1.4.0",
     "nuxt": "^4.2.2",
     "nuxt-auth-sanctum": "2.1.1",
@@ -25,6 +26,7 @@
     "tailwindcss": "^4.1.18",
     "vue": "^3.5.26",
     "vue-router": "^4.6.4",
+    "vue3-apexcharts": "^1.10.0",
     "yup": "^1.7.1"
   },
   "devDependencies": {
