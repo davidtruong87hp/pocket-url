@@ -53,7 +53,7 @@ class ConsumerManager
 
         $this->startConsumers();
         $this->startWorkers();
-        $this->startMonitor();
+        // $this->startMonitor();
 
         Log::info('✅ RabbitMQ Consumer Manager started');
     }

@@ -3,7 +3,7 @@
 namespace App\Services\Analytics\Transformers;
 
 use App\Services\Analytics\Transformers\Traits\AggregatesJsonColumns;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection;
 
 class DeviceBreakdownTransformer
 {
@@ -19,7 +19,7 @@ class DeviceBreakdownTransformer
                 'label' => $item['label'],
                 'value' => $item['value'],
                 'percentage' => $total > 0
-                    ? round(($item['value'] / $total) * 100, 1)
+                    ? round(($item['value'] / $total) * 100, 2)
                     : 0,
             ];
         })->toArray();

@@ -3,7 +3,7 @@
 namespace App\Services\Analytics\Transformers;
 
 use App\Services\Analytics\Transformers\Traits\AggregatesJsonColumns;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection;
 
 class LocationBreakdownTransformer
 {
@@ -28,10 +28,10 @@ class LocationBreakdownTransformer
         return collect($data)->map(function ($item, $index) use ($total) {
             return [
                 'rank' => $index + 1,
-                'country' => $item['label'],
+                'location' => $item['label'],
                 'engagements' => $item['value'],
                 'percentage' => $total > 0
-                    ? round(($item['value'] / $total) * 100, 1)
+                    ? round(($item['value'] / $total) * 100, 2)
                     : 0,
             ];
         })->toArray();

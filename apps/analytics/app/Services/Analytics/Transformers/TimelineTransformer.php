@@ -2,8 +2,8 @@
 
 namespace App\Services\Analytics\Transformers;
 
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 
 class TimelineTransformer
 {

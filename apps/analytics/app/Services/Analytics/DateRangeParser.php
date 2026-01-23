@@ -12,7 +12,6 @@ class DateRangeParser
         $preset = $params['dateRange'] ?? null;
         $startDate = $params['startDate'] ?? null;
         $endDate = $params['endDate'] ?? null;
-        $groupBy = $params['groupBy'] ?? null;
 
         if ($preset) {
             $dates = $this->parsePreset($preset, $timezone);
@@ -23,7 +22,6 @@ class DateRangeParser
         return [
             'start' => $dates['start'],
             'end' => $dates['end'],
-            'group_by' => $groupBy,
             'timezone' => $timezone,
         ];
     }

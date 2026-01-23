@@ -3,8 +3,8 @@
 namespace App\Services\Analytics\Transformers;
 
 use App\Services\Analytics\Transformers\Traits\AggregatesJsonColumns;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 
 class StatsCardsTransformer
 {
