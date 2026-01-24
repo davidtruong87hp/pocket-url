@@ -25,7 +25,6 @@ export class ClickPublisher {
     );
 
     if (success) {
-      this.logger.debug('Click event published: ' + event.shortcode);
       this.metricsService.incrementClickEventPublished();
     } else {
       this.logger.error('Failed to publish click event: ' + event.shortcode);

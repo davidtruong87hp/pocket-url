@@ -13,6 +13,7 @@ export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
   private connection: amqp.ChannelModel;
   private channel: amqp.Channel;
   private isConnected = false;
+  private readonly assertedExchanges = new Set<string>();
 
   constructor(private readonly configService: ConfigService) {}
 
@@ -26,6 +27,8 @@ export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
 
   private async connect() {
     try {
+      this.assertedExchanges.clear();
+
       const rabbitUrl = this.configService.get<string>('RABBITMQ_URL') || '';
       this.connection = await amqp.connect(rabbitUrl);
       this.channel = await this.connection.createChannel();
@@ -43,7 +46,9 @@ export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
         this.isConnected = false;
 
         setTimeout(() => {
-          this.connect();
+          this.connect().catch((error) => {
+            this.logger.error('Failed to reconnect to RabbitMQ', error);
+          });
         }, 5000);
       });
     } catch (error) {
@@ -51,7 +56,9 @@ export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
       this.isConnected = false;
 
       setTimeout(() => {
-        this.connect();
+        this.connect().catch((error) => {
+          this.logger.error('Failed to reconnect to RabbitMQ', error);
+        });
       }, 5000);
     }
   }
@@ -60,6 +67,7 @@ export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
     try {
       await this.channel?.close();
       await this.connection?.close();
+      this.assertedExchanges.clear();
       this.logger.log('RabbitMQ connection closed');
     } catch (error) {
       this.logger.error('Failed to close RabbitMQ connection', error);
@@ -78,9 +86,13 @@ export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
     }
 
     try {
-      await this.channel.assertExchange(exchange, 'topic', {
-        durable: true,
-      });
+      if (!this.assertedExchanges.has(exchange)) {
+        await this.channel.assertExchange(exchange, 'topic', {
+          durable: true,
+        });
+
+        this.assertedExchanges.add(exchange);
+      }
 
       const messageBuffer = Buffer.from(JSON.stringify(message));
 
@@ -90,7 +102,6 @@ export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
         ...options,
       });
 
-      this.logger.debug(`Message published to ${exchange}/${routingKey}`);
       return true;
     } catch (error) {
       this.logger.error('Failed to publish message', error);

@@ -1,4 +1,4 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { Client, type ClientGrpc } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
 import { grpcClientOptions } from './grpc-client.options';
@@ -10,6 +10,8 @@ import { MetricsService } from '../metrics/metrics.service';
 export class ShortenerClient implements OnModuleInit {
   @Client(grpcClientOptions)
   private readonly client: ClientGrpc;
+
+  private readonly logger = new Logger(ShortenerClient.name);
 
   private shortenerService: ShortenerService;
 
@@ -66,7 +68,7 @@ export class ShortenerClient implements OnModuleInit {
 
       return cacheData;
     } catch (error) {
-      console.error('gRPC error: ', error);
+      this.logger.error('gRPC error: ', error);
 
       return null;
     }

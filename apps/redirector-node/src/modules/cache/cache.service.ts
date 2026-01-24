@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { CACHE_CLIENT } from './cache.module';
 import Keyv from 'keyv';
 
@@ -16,6 +16,8 @@ export interface CachedShortCode {
 
 @Injectable()
 export class CacheService {
+  private readonly logger = new Logger(CacheService.name);
+
   constructor(@Inject(CACHE_CLIENT) private readonly cache: Keyv) {}
 
   async get(shortcode: string): Promise<CachedShortCode | null> {
@@ -29,7 +31,7 @@ export class CacheService {
 
       return data;
     } catch (error) {
-      console.error('Cache get error: ', error);
+      this.logger.error('Cache get error: ', error);
 
       return null;
     }
@@ -45,9 +47,9 @@ export class CacheService {
       const cacheTtl = ttl || 10 * 60 * 1000;
 
       await this.cache.set(cacheKey, data, cacheTtl);
-      console.log(`Cached ${shortcode} for ${cacheTtl}ms`);
+      this.logger.log(`Cached ${shortcode} for ${cacheTtl}ms`);
     } catch (error) {
-      console.error('Cache set error: ', error);
+      this.logger.error('Cache set error: ', error);
     }
   }
 
@@ -56,31 +58,9 @@ export class CacheService {
       const cacheKey = `shortcode:${shortcode}`;
 
       await this.cache.delete(cacheKey);
-      console.log(`Invalidated cache for ${shortcode}`);
+      this.logger.log(`Invalidated cache for ${shortcode}`);
     } catch (error) {
-      console.error('Cache delete error: ', error);
+      this.logger.error('Cache delete error: ', error);
     }
-  }
-
-  async recordHit(): Promise<void> {
-    const current = (await this.cache.get<number>('stats:hits')) || 0;
-    await this.cache.set('stats:hits', current + 1);
-  }
-
-  async recordMiss(): Promise<void> {
-    const current = (await this.cache.get<number>('stats:misses')) || 0;
-    await this.cache.set('stats:misses', current + 1);
-  }
-
-  async getStats(): Promise<{ hits: number; misses: number; hitRate: number }> {
-    const hits = (await this.cache.get<number>('stats:hits')) || 0;
-    const misses = (await this.cache.get<number>('stats:misses')) || 0;
-    const total = hits + misses;
-
-    return {
-      hits,
-      misses,
-      hitRate: (hits / total) * 100,
-    };
   }
 }

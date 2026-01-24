@@ -54,6 +54,6 @@ export class AppController {
         console.log('Failed to publish click event', err);
       });
 
-    return res.redirect(301, result.destinationUrl);
+    res.redirect(301, result.destinationUrl);
   }
 }
