@@ -11,6 +11,7 @@ services:
       - '${REDIRECTOR_METRICS_PORT:-9464}:9464'
     environment:
       - SHORTENER_GRPC_URL=pocket-url-shortener-grpc:${SHORTENER_GRPC_PORT:-5001}
+      - NODE_OPTIONS="--max-old-space-size=512"
     env_file:
       - ../../../../apps/redirector-node/.env
     volumes:

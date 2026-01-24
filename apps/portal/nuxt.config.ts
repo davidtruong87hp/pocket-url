@@ -70,8 +70,8 @@ export default defineNuxtConfig({
 
   sanctum: {
     mode: 'token',
-    baseUrl: 'http://localhost:8888/gateway',
-    origin: 'http://localhost:8888',
+    baseUrl: 'http://localhost:3001/gateway',
+    origin: 'http://localhost:3001',
     endpoints: {
       csrf: '/sanctum/csrf-cookie',
       login: '/api/login',

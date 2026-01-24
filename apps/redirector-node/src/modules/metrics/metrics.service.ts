@@ -1,5 +1,6 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { Counter, Histogram, Meter, metrics } from '@opentelemetry/api';
+import { Counter, Histogram, Meter } from '@opentelemetry/api';
+import { getMeter, MeterCategory } from './meter-registry';
 
 @Injectable()
 export class MetricsService implements OnModuleInit {
@@ -21,7 +22,7 @@ export class MetricsService implements OnModuleInit {
   private activeRedirectsCount = 0;
 
   onModuleInit() {
-    this.meter = metrics.getMeter('pocket-url-redirector', '1.0.0');
+    this.meter = getMeter(MeterCategory.APPLICATION);
 
     // Initialize counters
     this.redirectCounter = this.meter.createCounter('redirects.total', {
