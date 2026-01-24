@@ -7,9 +7,11 @@ import { ConsumersModule } from './modules/consumers/consumers.module';
 import { HealthModule } from './modules/health/health.module';
 import { ShortenerModule } from './modules/shortener/shortener.module';
 import { AnalyticsModule } from './modules/analytics/analytics.module';
+import { MetricsModule } from './modules/metrics/metrics.module';
 
 @Module({
   imports: [
+    MetricsModule,
     ConfigModule.forRoot({ isGlobal: true }),
     CacheRedisModule.forRootAsync(),
     RabbitMQModule,

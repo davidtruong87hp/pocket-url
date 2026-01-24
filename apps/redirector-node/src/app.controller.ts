@@ -1,15 +1,26 @@
-import { Controller, Get, Res, Param, Req } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Res,
+  Param,
+  Req,
+  UseInterceptors,
+} from '@nestjs/common';
 import type { Request, Response } from 'express';
 
 import { ShortenerClient } from './modules/shortener/shortener.service';
 import { ShortcodeNotFoundException } from './common/exceptions';
 import { ClickPublisher } from './modules/analytics/publishers/click.publisher';
+import { MetricsService } from './modules/metrics/metrics.service';
+import { MetricsInterceptor } from './modules/metrics/metrics.interceptor';
 
 @Controller()
+@UseInterceptors(MetricsInterceptor)
 export class AppController {
   constructor(
     private readonly shortenerClient: ShortenerClient,
     private readonly clickPublisher: ClickPublisher,
+    private readonly metricsService: MetricsService,
   ) {}
 
   @Get(':shortcode')
@@ -19,12 +30,14 @@ export class AppController {
     @Res() res: Response,
   ) {
     if (!shortcode || !/^[a-zA-Z0-9]{6}$/.test(shortcode)) {
+      this.metricsService.incrementNotFound();
       throw new ShortcodeNotFoundException(shortcode);
     }
 
     const result = await this.shortenerClient.resolve(shortcode);
 
     if (!result) {
+      this.metricsService.incrementNotFound();
       throw new ShortcodeNotFoundException(shortcode);
     }
 

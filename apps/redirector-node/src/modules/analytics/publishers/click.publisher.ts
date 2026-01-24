@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { RabbitMQService } from 'src/modules/rabbitmq/rabbitmq.service';
 import { ClickEventDto } from '../dto/click-event.dto';
+import { MetricsService } from 'src/modules/metrics/metrics.service';
 
 @Injectable()
 export class ClickPublisher {
@@ -8,7 +9,10 @@ export class ClickPublisher {
   private readonly exchange = 'analytics.exchange';
   private readonly routingKey = 'click.tracked';
 
-  constructor(private readonly rabbitmqService: RabbitMQService) {}
+  constructor(
+    private readonly rabbitmqService: RabbitMQService,
+    private readonly metricsService: MetricsService,
+  ) {}
 
   async publishClickEvent(event: ClickEventDto): Promise<void> {
     const success = await this.rabbitmqService.publish(
@@ -22,8 +26,10 @@ export class ClickPublisher {
 
     if (success) {
       this.logger.debug('Click event published: ' + event.shortcode);
+      this.metricsService.incrementClickEventPublished();
     } else {
       this.logger.error('Failed to publish click event: ' + event.shortcode);
+      this.metricsService.incrementClickEventFailed();
     }
   }
 }

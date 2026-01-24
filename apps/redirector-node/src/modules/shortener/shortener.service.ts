@@ -4,6 +4,7 @@ import { firstValueFrom } from 'rxjs';
 import { grpcClientOptions } from './grpc-client.options';
 import { ShortenerService } from './shortener.interface';
 import { CachedShortCode, CacheService } from 'src/modules/cache/cache.service';
+import { MetricsService } from '../metrics/metrics.service';
 
 @Injectable()
 export class ShortenerClient implements OnModuleInit {
@@ -12,7 +13,10 @@ export class ShortenerClient implements OnModuleInit {
 
   private shortenerService: ShortenerService;
 
-  constructor(private readonly cacheService: CacheService) {}
+  constructor(
+    private readonly cacheService: CacheService,
+    private readonly metricsService: MetricsService,
+  ) {}
 
   onModuleInit() {
     this.shortenerService =
@@ -20,19 +24,21 @@ export class ShortenerClient implements OnModuleInit {
   }
 
   async resolve(shortcode: string): Promise<CachedShortCode | null> {
-    const cached = await this.cacheService.get(shortcode);
-
-    if (cached) {
-      console.log(`Cache HIT for ${shortcode}`);
-      await this.cacheService.recordHit();
-
-      return cached;
-    }
-
-    console.log(`Cache MISS for ${shortcode}, calling gRPC...`);
-    await this.cacheService.recordMiss();
+    const startTime = Date.now();
 
     try {
+      const cached = await this.cacheService.get(shortcode);
+
+      if (cached) {
+        this.metricsService.incrementCacheHits();
+        const duration = Date.now() - startTime;
+        this.metricsService.recordCacheResolveDuration(duration);
+
+        return cached;
+      }
+
+      this.metricsService.incrementCacheMisses();
+
       const result = await firstValueFrom(
         this.shortenerService.resolveShortcode({ shortcode }),
       );
@@ -54,6 +60,9 @@ export class ShortenerClient implements OnModuleInit {
       };
 
       await this.cacheService.set(shortcode, cacheData);
+
+      const duration = Date.now() - startTime;
+      this.metricsService.recordCacheResolveDuration(duration);
 
       return cacheData;
     } catch (error) {

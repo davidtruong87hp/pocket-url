@@ -8,8 +8,11 @@ services:
     container_name: pocket-url-redirector-node
     ports:
       - '${REDIRECTOR_NODE_PORT:-3000}:3000'
+      - '${REDIRECTOR_METRICS_PORT:-9464}:9464'
     environment:
       - SHORTENER_GRPC_URL=pocket-url-shortener-grpc:9001
+    env_file:
+      - ../../../../apps/redirector-node/.env
     volumes:
       - ../../../../apps/redirector-node:/app:cached
     networks:
