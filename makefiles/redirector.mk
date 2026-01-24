@@ -29,7 +29,7 @@ redirector-restart: redirector-down redirector-up ## Restart redirector service
 .PHONY: redirector-build
 redirector-build: ## Rebuild redirector containers
 	@$(call log_info,"Building redirector containers...")
-	@docker-compose -p $(PROJECT_NAME)-redirector -f $(REDIRECTOR_COMPOSE_FILE) --env-file $(ENV_FILE) build --no-cache
+	@docker-compose -p $(PROJECT_NAME)-redirector -f $(REDIRECTOR_COMPOSE_FILE) --env-file $(ENV_FILE) build
 	@$(call log_success,"Build complete")
 	make redirector-up
 

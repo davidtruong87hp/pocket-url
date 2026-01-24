@@ -41,15 +41,15 @@ RUN composer install --no-interaction --no-scripts
 # Copy the rest of the application
 COPY apps/shortener .
 
+# Ensure storage directories have correct permissions
+RUN mkdir -p storage/framework/{sessions,views,cache,testing} storage/logs bootstrap/cache \
+  && chown -R www-data:www-data storage bootstrap/cache
+
 # Run composer dump-autoload to ensure everything is loaded
 RUN composer dump-autoload --optimize
 
 # Clear config cache to avoid stale config
 RUN php artisan config:clear || true
-
-# Ensure storage directories have correct permissions
-RUN mkdir -p storage/framework/{sessions,views,cache,testing} storage/logs bootstrap/cache \
-  && chown -R www-data:www-data storage bootstrap/cache
 
 # Switch to www-data user
 USER www-data
@@ -89,6 +89,10 @@ RUN composer install --optimize-autoloader --no-dev --no-scripts --no-interactio
 # Copy application files
 COPY apps/shortener .
 
+# Create necessary directories with proper permissions
+RUN mkdir -p storage/framework/{sessions,views,cache,testing} storage/logs bootstrap/cache \
+  && chown -R www-data:www-data storage bootstrap/cache
+
 # Run composer scripts and optimizations
 RUN composer dump-autoload --optimize
 
@@ -96,10 +100,6 @@ RUN composer dump-autoload --optimize
 RUN php artisan config:cache && \
   php artisan route:cache && \
   php artisan view:cache
-
-# Create necessary directories with proper permissions
-RUN mkdir -p storage/framework/{sessions,views,cache,testing} storage/logs bootstrap/cache \
-  && chown -R www-data:www-data storage bootstrap/cache
 
 # Switch to non-root user for security
 USER www-data

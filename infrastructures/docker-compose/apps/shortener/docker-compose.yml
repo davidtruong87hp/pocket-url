@@ -31,6 +31,7 @@ services:
     build:
       context: ../../../../.
       dockerfile: infrastructures/docker-compose/apps/shortener/docker/roadrunner/Dockerfile
+      target: development
     ports:
       - '${SHORTENER_GRPC_PORT:-9001}:9001'
     command: ["rr", "serve", "-c", ".rr-grpc.yaml"]

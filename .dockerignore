@@ -1,0 +1,25 @@
+# Node.js (NestJS, Nuxt)
+**/node_modules/
+npm-debug.log
+**/.next/
+**/.nuxt/
+**/dist/
+
+# Laravel (PHP)  
+**/vendor/
+**/bootstrap/cache/
+**/storage/logs/
+**/storage/framework/cache/
+**/storage/framework/sessions/
+**/storage/framework/views/
+
+# Common
+.git/
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
+README.md
+**/.vscode/
+**/.idea/

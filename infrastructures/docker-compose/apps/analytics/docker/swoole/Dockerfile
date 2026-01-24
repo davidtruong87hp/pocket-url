@@ -59,15 +59,15 @@ RUN composer install --no-interaction --no-scripts
 
 COPY apps/analytics ./
 
+# Create necessary directories with proper permissions
+RUN mkdir -p storage/framework/{sessions,views,cache,testing} storage/logs bootstrap/cache \
+  && chown -R www-data:www-data storage bootstrap/cache
+
 # Run post-install scripts
 RUN composer dump-autoload --optimize
 
 # Copy supervisor configuration
 COPY infrastructures/docker-compose/apps/analytics/docker/swoole/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-
-# Create necessary directories with proper permissions
-RUN mkdir -p storage/framework/{sessions,views,cache,testing} storage/logs bootstrap/cache \
-  && chown -R www-data:www-data storage bootstrap/cache
 
 EXPOSE 8001
 
