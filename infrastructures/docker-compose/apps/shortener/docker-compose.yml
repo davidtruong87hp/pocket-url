@@ -33,7 +33,9 @@ services:
       dockerfile: infrastructures/docker-compose/apps/shortener/docker/roadrunner/Dockerfile
       target: development
     ports:
-      - '${SHORTENER_GRPC_PORT:-9001}:9001'
+      - '${SHORTENER_GRPC_PORT:-5001}:5001'
+    environment:
+      - GRPC_PORT=${SHORTENER_GRPC_PORT:-5001}
     command: ["rr", "serve", "-c", ".rr-grpc.yaml"]
     volumes:
       - ../../../../apps/shortener:/app
@@ -74,7 +76,7 @@ services:
     image: mysql:8.0
     container_name: pocket-url-shortener-db
     ports:
-      - 3306:3306
+      - "${MYSQL_PORT:-3306}:3306"
     environment:
       MYSQL_ROOT_PASSWORD: '${MYSQL_ROOT_PASSWORD}'
       MYSQL_ROOT_HOST: '%'
