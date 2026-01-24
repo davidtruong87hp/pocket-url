@@ -1,0 +1,23 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    cluster: 'pocket-url'
+    environment: 'development'
+
+scrape_configs:
+  # Prometheus itself
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+  
+  # Redirector service (NestJS)
+  - job_name: 'pocket-url-redirector'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['host.docker.internal:9464'] # For Mac/Windows
+      # - targets: ['172.17.0.1:9464'] # For Linux
+        labels:
+          app: 'redirector-node'
+          language: 'nestjs'
+    metrics_path: '/metrics'

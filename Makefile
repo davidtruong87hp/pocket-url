@@ -13,6 +13,7 @@ include makefiles/shortener.mk
 include makefiles/redirector.mk
 include makefiles/analytics.mk
 include makefiles/portal.mk
+include makefiles/monitoring.mk
 
 .DEFAULT_GOAL := help
 
