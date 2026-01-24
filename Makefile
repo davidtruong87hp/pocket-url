@@ -14,6 +14,7 @@ include makefiles/redirector.mk
 include makefiles/analytics.mk
 include makefiles/portal.mk
 include makefiles/monitoring.mk
+include makefiles/load-tests.mk
 
 .DEFAULT_GOAL := help
 
