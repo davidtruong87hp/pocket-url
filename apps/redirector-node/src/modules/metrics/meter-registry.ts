@@ -12,6 +12,11 @@ export enum MeterCategory {
 
   // NodeJS runtime metrics
   RUNTIME = 'runtime',
+
+  // External dependencies
+  REDIS = 'redis',
+  GRPC = 'grpc',
+  RABBITMQ = 'rabbitmq',
 }
 
 interface MeterConfig {
@@ -38,6 +43,24 @@ class MeterRegistry {
     this.register({
       category: MeterCategory.RUNTIME,
       description: 'Runtime metrics (memory, CPU, event loop)',
+      enabled: true,
+    });
+
+    this.register({
+      category: MeterCategory.REDIS,
+      description: 'Redis/Cache operation metrics',
+      enabled: true,
+    });
+
+    this.register({
+      category: MeterCategory.GRPC,
+      description: 'gRPC client/server metrics',
+      enabled: true,
+    });
+
+    this.register({
+      category: MeterCategory.RABBITMQ,
+      description: 'RabbitMQ producer/consumer metrics',
       enabled: true,
     });
   }

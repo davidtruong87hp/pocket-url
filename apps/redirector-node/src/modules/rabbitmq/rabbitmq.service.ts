@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as amqp from 'amqplib';
+import { RabbitMQMetricsService } from '../metrics/rabbitmq-metrics.service';
 
 @Injectable()
 export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
@@ -15,7 +16,10 @@ export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
   private isConnected = false;
   private readonly assertedExchanges = new Set<string>();
 
-  constructor(private readonly configService: ConfigService) {}
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly rabbitMQMetricsService: RabbitMQMetricsService,
+  ) {}
 
   async onModuleInit() {
     await this.connect();
@@ -94,13 +98,20 @@ export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
         this.assertedExchanges.add(exchange);
       }
 
-      const messageBuffer = Buffer.from(JSON.stringify(message));
+      await this.rabbitMQMetricsService.trackPublish(
+        exchange,
+        routingKey,
+        // eslint-disable-next-line @typescript-eslint/require-await
+        async () => {
+          const messageBuffer = Buffer.from(JSON.stringify(message));
 
-      this.channel.publish(exchange, routingKey, messageBuffer, {
-        persistent: true,
-        contentType: 'application/json',
-        ...options,
-      });
+          this.channel.publish(exchange, routingKey, messageBuffer, {
+            persistent: true,
+            contentType: 'application/json',
+            ...options,
+          });
+        },
+      );
 
       return true;
     } catch (error) {

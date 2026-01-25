@@ -5,6 +5,7 @@ import { grpcClientOptions } from './grpc-client.options';
 import { ShortenerService } from './shortener.interface';
 import { CachedShortCode, CacheService } from 'src/modules/cache/cache.service';
 import { MetricsService } from '../metrics/metrics.service';
+import { GrpcMetricsService } from '../metrics/grpc-metrics.service';
 
 @Injectable()
 export class ShortenerClient implements OnModuleInit {
@@ -18,6 +19,7 @@ export class ShortenerClient implements OnModuleInit {
   constructor(
     private readonly cacheService: CacheService,
     private readonly metricsService: MetricsService,
+    private readonly grpcService: GrpcMetricsService,
   ) {}
 
   onModuleInit() {
@@ -41,8 +43,13 @@ export class ShortenerClient implements OnModuleInit {
 
       this.metricsService.incrementCacheMisses();
 
-      const result = await firstValueFrom(
-        this.shortenerService.resolveShortcode({ shortcode }),
+      const result = await this.grpcService.trackCall(
+        'resolveShortcode',
+        async () => {
+          return firstValueFrom(
+            this.shortenerService.resolveShortcode({ shortcode }),
+          );
+        },
       );
 
       if (!result.success || !result.destinationUrl) {
