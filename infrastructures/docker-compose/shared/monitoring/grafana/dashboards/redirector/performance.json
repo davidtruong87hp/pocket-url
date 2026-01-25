@@ -6,7 +6,6 @@
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
   "id": null,
-  "links": [],
   "panels": [
     {
       "datasource": {
@@ -21,7 +20,7 @@
           "custom": {
             "axisCenteredZero": false,
             "axisColorMode": "text",
-            "axisLabel": "Operations/sec",
+            "axisLabel": "Memory (MB)",
             "axisPlacement": "auto",
             "barAlignment": 0,
             "drawStyle": "line",
@@ -55,22 +54,26 @@
               {
                 "color": "green",
                 "value": null
+              },
+              {
+                "color": "red",
+                "value": 512
               }
             ]
           },
-          "unit": "ops"
+          "unit": "decmbytes"
         }
       },
       "gridPos": {
         "h": 8,
-        "w": 8,
+        "w": 12,
         "x": 0,
         "y": 0
       },
       "id": 1,
       "options": {
         "legend": {
-          "calcs": ["mean", "lastNotNull"],
+          "calcs": ["mean", "lastNotNull", "max"],
           "displayMode": "table",
           "placement": "bottom",
           "showLegend": true
@@ -82,17 +85,27 @@
       },
       "targets": [
         {
-          "expr": "rate(redis_operations_total{status=\"success\"}[1m])",
-          "legendFormat": "Success",
+          "expr": "nodejs_memory_heap_used / 1024 / 1024",
+          "legendFormat": "Heap Used",
           "refId": "A"
         },
         {
-          "expr": "rate(redis_operations_total{status=\"error\"}[1m])",
-          "legendFormat": "Errors",
+          "expr": "nodejs_memory_heap_total / 1024 / 1024",
+          "legendFormat": "Heap Total",
           "refId": "B"
+        },
+        {
+          "expr": "nodejs_memory_rss / 1024 / 1024",
+          "legendFormat": "RSS",
+          "refId": "C"
+        },
+        {
+          "expr": "nodejs_memory_external / 1024 / 1024",
+          "legendFormat": "External",
+          "refId": "D"
         }
       ],
-      "title": "Redis Operations Rate",
+      "title": "Memory Usage",
       "type": "timeseries"
     },
     {
@@ -103,84 +116,56 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "Calls/sec",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "tooltip": false,
-              "viz": false,
-              "legend": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 2,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
+            "mode": "thresholds"
           },
           "mappings": [],
+          "max": 100,
+          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
                 "color": "green",
                 "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 70
+              },
+              {
+                "color": "red",
+                "value": 85
               }
             ]
           },
-          "unit": "ops"
+          "unit": "percent"
         }
       },
       "gridPos": {
         "h": 8,
-        "w": 8,
-        "x": 8,
+        "w": 6,
+        "x": 12,
         "y": 0
       },
       "id": 2,
       "options": {
-        "legend": {
-          "calcs": ["mean", "lastNotNull"],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
         },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
       },
       "targets": [
         {
-          "expr": "rate(grpc_calls_total{status=\"success\"}[1m])",
-          "legendFormat": "Success - {{method}}",
+          "expr": "(nodejs_memory_heap_used / nodejs_memory_heap_total) * 100",
           "refId": "A"
-        },
-        {
-          "expr": "rate(grpc_calls_total{status=\"error\"}[1m])",
-          "legendFormat": "Errors - {{method}}",
-          "refId": "B"
         }
       ],
-      "title": "gRPC Call Rate",
-      "type": "timeseries"
+      "title": "Heap Usage %",
+      "type": "gauge"
     },
     {
       "datasource": {
@@ -190,37 +175,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "Messages/sec",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "tooltip": false,
-              "viz": false,
-              "legend": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 2,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
+            "mode": "thresholds"
           },
           "mappings": [],
           "thresholds": {
@@ -229,45 +184,45 @@
               {
                 "color": "green",
                 "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 50
+              },
+              {
+                "color": "red",
+                "value": 100
               }
             ]
           },
-          "unit": "msgs"
+          "unit": "percent"
         }
       },
       "gridPos": {
         "h": 8,
-        "w": 8,
-        "x": 16,
+        "w": 6,
+        "x": 18,
         "y": 0
       },
       "id": 3,
       "options": {
-        "legend": {
-          "calcs": ["mean", "lastNotNull"],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
         },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
       },
       "targets": [
         {
-          "expr": "rate(rabbitmq_messages_published_total{status=\"success\"}[1m])",
-          "legendFormat": "Success",
+          "expr": "nodejs_cpu_usage",
           "refId": "A"
-        },
-        {
-          "expr": "rate(rabbitmq_messages_published_total{status=\"error\"}[1m])",
-          "legendFormat": "Errors",
-          "refId": "B"
         }
       ],
-      "title": "RabbitMQ Publish Rate",
-      "type": "timeseries"
+      "title": "CPU Usage %",
+      "type": "gauge"
     },
     {
       "datasource": {
@@ -282,7 +237,7 @@
           "custom": {
             "axisCenteredZero": false,
             "axisColorMode": "text",
-            "axisLabel": "Latency (ms)",
+            "axisLabel": "Lag (ms)",
             "axisPlacement": "auto",
             "barAlignment": 0,
             "drawStyle": "line",
@@ -318,12 +273,8 @@
                 "value": null
               },
               {
-                "color": "yellow",
-                "value": 50
-              },
-              {
                 "color": "red",
-                "value": 100
+                "value": 50
               }
             ]
           },
@@ -332,7 +283,7 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 8,
+        "w": 12,
         "x": 0,
         "y": 8
       },
@@ -351,17 +302,12 @@
       },
       "targets": [
         {
-          "expr": "histogram_quantile(0.95, rate(redis_operation_duration_bucket[1m]))",
-          "legendFormat": "P95",
+          "expr": "nodejs_eventloop_delay_mean * 1000",
+          "legendFormat": "Event loop mean delay (auto-instrumentation) - should be < 50ms",
           "refId": "A"
-        },
-        {
-          "expr": "histogram_quantile(0.99, rate(redis_operation_duration_bucket[1m]))",
-          "legendFormat": "P99",
-          "refId": "B"
         }
       ],
-      "title": "Redis Latency",
+      "title": "Event Loop Lag",
       "type": "timeseries"
     },
     {
@@ -377,7 +323,7 @@
           "custom": {
             "axisCenteredZero": false,
             "axisColorMode": "text",
-            "axisLabel": "Latency (ms)",
+            "axisLabel": "Count",
             "axisPlacement": "auto",
             "barAlignment": 0,
             "drawStyle": "line",
@@ -388,8 +334,8 @@
               "viz": false,
               "legend": false
             },
-            "lineInterpolation": "smooth",
-            "lineWidth": 2,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
             "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
@@ -401,7 +347,7 @@
               "mode": "none"
             },
             "thresholdsStyle": {
-              "mode": "line"
+              "mode": "off"
             }
           },
           "mappings": [],
@@ -411,30 +357,22 @@
               {
                 "color": "green",
                 "value": null
-              },
-              {
-                "color": "yellow",
-                "value": 100
-              },
-              {
-                "color": "red",
-                "value": 500
               }
             ]
           },
-          "unit": "ms"
+          "unit": "short"
         }
       },
       "gridPos": {
         "h": 8,
-        "w": 8,
-        "x": 8,
+        "w": 12,
+        "x": 12,
         "y": 8
       },
       "id": 5,
       "options": {
         "legend": {
-          "calcs": ["mean", "max"],
+          "calcs": ["lastNotNull", "max"],
           "displayMode": "table",
           "placement": "bottom",
           "showLegend": true
@@ -446,112 +384,17 @@
       },
       "targets": [
         {
-          "expr": "histogram_quantile(0.95, rate(grpc_call_duration_bucket[1m]))",
-          "legendFormat": "P95",
+          "expr": "nodejs_handles_active",
+          "legendFormat": "Active Handles",
           "refId": "A"
         },
         {
-          "expr": "histogram_quantile(0.99, rate(grpc_call_duration_bucket[1m]))",
-          "legendFormat": "P99",
+          "expr": "nodejs_requests_active",
+          "legendFormat": "Active Requests",
           "refId": "B"
         }
       ],
-      "title": "gRPC Latency",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "Latency (ms)",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "tooltip": false,
-              "viz": false,
-              "legend": false
-            },
-            "lineInterpolation": "smooth",
-            "lineWidth": 2,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "line"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "yellow",
-                "value": 50
-              },
-              {
-                "color": "red",
-                "value": 100
-              }
-            ]
-          },
-          "unit": "ms"
-        }
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 16,
-        "y": 8
-      },
-      "id": 6,
-      "options": {
-        "legend": {
-          "calcs": ["mean", "max"],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "targets": [
-        {
-          "expr": "histogram_quantile(0.95, rate(rabbitmq_publish_duration_bucket[1m]))",
-          "legendFormat": "P95",
-          "refId": "A"
-        },
-        {
-          "expr": "histogram_quantile(0.99, rate(rabbitmq_publish_duration_bucket[1m]))",
-          "legendFormat": "P99",
-          "refId": "B"
-        }
-      ],
-      "title": "RabbitMQ Publish Latency",
+      "title": "Active Handles & Requests",
       "type": "timeseries"
     },
     {
@@ -571,20 +414,67 @@
               {
                 "color": "green",
                 "value": null
-              },
-              {
-                "color": "red",
-                "value": 1
               }
             ]
           },
-          "unit": "short"
+          "unit": "decmbytes"
         }
       },
       "gridPos": {
         "h": 4,
         "w": 4,
         "x": 0,
+        "y": 16
+      },
+      "id": 6,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "expr": "nodejs_memory_heap_used / 1024 / 1024",
+          "refId": "A"
+        }
+      ],
+      "title": "Current Heap Used",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "decmbytes"
+        }
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 4,
         "y": 16
       },
       "id": 7,
@@ -602,11 +492,11 @@
       },
       "targets": [
         {
-          "expr": "rate(redis_errors_total[5m])",
+          "expr": "nodejs_memory_rss / 1024 / 1024",
           "refId": "A"
         }
       ],
-      "title": "Redis Errors/sec",
+      "title": "Current RSS",
       "type": "stat"
     },
     {
@@ -628,18 +518,22 @@
                 "value": null
               },
               {
+                "color": "yellow",
+                "value": 30
+              },
+              {
                 "color": "red",
-                "value": 1
+                "value": 50
               }
             ]
           },
-          "unit": "short"
+          "unit": "ms"
         }
       },
       "gridPos": {
         "h": 4,
         "w": 4,
-        "x": 4,
+        "x": 8,
         "y": 16
       },
       "id": 8,
@@ -657,11 +551,11 @@
       },
       "targets": [
         {
-          "expr": "rate(grpc_errors_total[5m])",
+          "expr": "nodejs_eventloop_lag",
           "refId": "A"
         }
       ],
-      "title": "gRPC Errors/sec",
+      "title": "Event Loop Lag",
       "type": "stat"
     },
     {
@@ -681,20 +575,16 @@
               {
                 "color": "green",
                 "value": null
-              },
-              {
-                "color": "red",
-                "value": 1
               }
             ]
           },
-          "unit": "short"
+          "unit": "s"
         }
       },
       "gridPos": {
         "h": 4,
         "w": 4,
-        "x": 8,
+        "x": 12,
         "y": 16
       },
       "id": 9,
@@ -712,17 +602,17 @@
       },
       "targets": [
         {
-          "expr": "rate(rabbitmq_errors_total[5m])",
+          "expr": "nodejs_process_uptime",
           "refId": "A"
         }
       ],
-      "title": "RabbitMQ Errors/sec",
+      "title": "Uptime",
       "type": "stat"
     }
   ],
   "refresh": "5s",
   "schemaVersion": 38,
-  "tags": ["dependencies", "redis", "grpc", "rabbitmq"],
+  "tags": ["service:redirector", "type:performance"],
   "templating": {
     "list": []
   },
@@ -732,7 +622,19 @@
   },
   "timepicker": {},
   "timezone": "browser",
-  "title": "Dependencies - Redis, gRPC, RabbitMQ",
-  "uid": "redirector-dependencies",
-  "version": 0
+  "title": "Redirector - Performance",
+  "uid": "redirector-performance",
+  "version": 0,
+  "links": [
+    {
+      "title": "← Back to Redirector Overview",
+      "url": "/d/redirector-overview",
+      "icon": "arrow-left"
+    },
+    {
+      "title": "Dependencies →",
+      "url": "/d/redirector-dependencies",
+      "icon": "arrow-right"
+    }
+  ]
 }

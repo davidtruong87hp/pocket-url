@@ -10,13 +10,13 @@ scrape_configs:
   - job_name: 'prometheus'
     static_configs:
       - targets: ['localhost:9090']
-  
+
   # Redirector service (NestJS)
-  - job_name: 'pocket-url-redirector'
+  - job_name: 'redirector-node'
     scrape_interval: 5s
     static_configs:
       - targets: ['host.docker.internal:9464'] # For Mac/Windows
-      # - targets: ['172.17.0.1:9464'] # For Linux
+        # - targets: ['172.17.0.1:9464'] # For Linux
         labels:
           app: 'redirector-node'
           language: 'nestjs'
